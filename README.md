@@ -6,5 +6,5 @@ Isaac Shih
 David Servias
 Sachin Betrabet
 
-![Image of High Level Architecture](https://drive.google.com/file/d/1LGlvR7BC-qON8q9K6gMO3Cby-UF5rxEg/view)
+[High Level Architecture](https://i.imgur.com/KOV37Vk.jpg)
 
