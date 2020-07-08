@@ -1,6 +1,6 @@
 
 let Clock = {
-  timeLeft: [25,0], // [minutes,secons]
+  timeLeft: [25,0], // [minutes,seconds]
   state: "sleep",
   updateState: (state) => this.state = state,
   updateTimeLeft: function(newVal){this.timeLeft = newVal},
@@ -19,7 +19,8 @@ let Clock = {
   startCountdown: function(time, state){
     this.updateState(state);
     let minutes = this.timeLeft[0];
-    let seconds = this.timeLeft[1]
+    let seconds = this.timeLeft[1];
+    const clockDisplay = document.getElementById('timerDisplay');
     const startCountdown = setInterval( function(){
       //for pause(), add event listener to button. If button is clicked,
       //use clearIntervals(startCountdown) to stop the timer.
@@ -38,7 +39,7 @@ let Clock = {
       if (minutes < 0){
         clearInterval(startCountdown);
       }
-      console.log(timeString);
+      clockDisplay.textContent = timeString;
     }, 1000);
     this.updateTimeLeft([minutes, seconds]);
     this.updateState("wait");

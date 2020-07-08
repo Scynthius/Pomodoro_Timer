@@ -3,7 +3,7 @@
         <div class="row justify-content-center">
             <div class="col-sm-8 col-lg-5 p-3">
                 <div class="card">
-                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <div class="btn-group btn-group-toggle mb-2" data-toggle="buttons">
                         <label class="btn btn-secondary active">
                             <input type="radio" name="task" id="task" checked> Task Timer
                         </label>
@@ -12,15 +12,15 @@
                         </label>
                     </div>
                     <div class="row justify-content-center">
-                        <h1 class="display-1">25:00</h1>
+                        <h1 class="display-1" id="timerDisplay">25:00</h1>
                     </div>
-                    <div class="row justify-content-center">
+                    <div class="row justify-content-center mt-2">
                         <div id="start_button">
-                            <button type="button" onclick="startClock" class="btn btn-outline-success">START</button>
+                            <button type="button" onclick="startClock()" class="btn btn-outline-success" id="start">START</button>
                         </div>
                         <div id="stop_button" hidden>
-                            <button type="button" class="btn btn-outline-secondary">PAUSE</button>
-                            <button type="button" class="btn btn-outline-danger">STOP</button>
+                            <button type="button" class="btn btn-outline-secondary" id="pause">PAUSE</button>
+                            <button type="button" class="btn btn-outline-danger" id="stop">STOP</button>
                         </div>
                     </div>
                 </div>

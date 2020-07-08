@@ -19,6 +19,9 @@ app.get('/',function(req,res){
   res.render('landing');
 });
 
+app.get('/sign_in',function(req,res){
+  res.render('sign_in');
+});
 
 /*app.get('/eagle',function(req,res){
   var context = {};
