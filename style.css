@@ -1,0 +1,10 @@
+body {
+    background: #252526;
+    font-family: "Oxygen", sans-serif;
+    padding-top: 65px;
+}
+
+#timer-text {
+    font-weight: 700;
+	font-size: 120px !important;
+}

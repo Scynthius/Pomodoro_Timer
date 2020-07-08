@@ -1,0 +1,29 @@
+{
+  "name": "pomodoro_timer",
+  "version": "1.0.0",
+  "description": "OSU CS361 Team 1 Project   Kelly Norris   Jonathan Fryman   Isaac Shih   David Servias   Sachin Betrabet",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Scynthius/Pomodoro_Timer.git"
+  },
+  "author": "team_1",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Scynthius/Pomodoro_Timer/issues"
+  },
+  "homepage": "https://github.com/Scynthius/Pomodoro_Timer#readme",
+  "dependencies": {
+    "body-parser": "^1.13.3",
+    "express": "^4.13.2",
+    "express-handlebars": "^2.0.1",
+    "express-session": "^1.11.3",
+    "forever": "^2.0.0",
+    "graceful-fs": "^4.2.3",
+    "gulp": "^4.0.2",
+    "mysql": "^2.8.0"
+  }
+}
