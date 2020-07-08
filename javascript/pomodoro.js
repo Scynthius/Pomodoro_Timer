@@ -1,6 +1,15 @@
+  
+  /*
+    for now we just have a single hardcoded mp3 that plays. can add more functionality (selecting, swapping) in the future
+  */
+  function playSound(filename){
+        let audio = new Audio(filename);
+        audio.play();
+  }
+
 
 let Clock = {
-  timeLeft: [25,0], // [minutes,seconds]
+  timeLeft: [0,10], // [minutes,seconds]
   state: "sleep",
   updateState: (state) => this.state = state,
   updateTimeLeft: function(newVal){this.timeLeft = newVal},
@@ -38,6 +47,7 @@ let Clock = {
       }
       if (minutes < 0){
         clearInterval(startCountdown);
+        playSound('http://soundbible.com/grab.php?id=914&type=mp3');
       }
       clockDisplay.textContent = timeString;
     }, 1000);
@@ -46,6 +56,7 @@ let Clock = {
   }
 
 
+  
 }
 
 
