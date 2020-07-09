@@ -12,3 +12,19 @@ function startClock() {
         stopbtn.hidden = false;
     }
 }
+
+
+function togglePause() {
+    let pausebtn = document.getElementById("pause");
+    let btnstate = pausebtn.textContent;
+    if (btnstate === "PAUSE"){
+        pausebtn.textContent = "RESUME";
+        pausebtn.classList.remove("btn-outline-secondary");
+        pausebtn.classList.add("btn-outline-success");
+    } else {
+        pausebtn.textContent = "PAUSE";
+        pausebtn.classList.remove("btn-outline-success");
+        pausebtn.classList.add("btn-outline-secondary");
+    }
+
+}
