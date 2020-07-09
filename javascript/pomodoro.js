@@ -1,6 +1,7 @@
-  
+
   /*
     for now we just have a single hardcoded mp3 that plays. can add more functionality (selecting, swapping) in the future
+    I added this function to the clock object as a method -- DS
   */
   function playSound(filename){
         let audio = new Audio(filename);
@@ -9,10 +10,15 @@
 
 
 let Clock = {
-  timeLeft: [0,10], // [minutes,seconds]
+  taskTimeLeft: [1,0], // [minutes,secons]
+  breakTimeLeft: [5,0],
   state: "sleep",
-  updateState: (state) => this.state = state,
-  updateTimeLeft: function(newVal){this.timeLeft = newVal},
+  updateState: function(state) {
+    console.log(state+" started");
+    this.state = state;
+  },
+  updateTaskTime: function(newVal){this.taskTimeLeft = newVal},
+  updateBreakTime: function(newVal){this.breakTimeLeft = newVal},
   //logs remaining time to console as an array [minutes, seconds]
   logTimeLeft: function(){console.log(this.timeLeft)},
   //startCountdown(time, state)
@@ -21,19 +27,29 @@ let Clock = {
   ready: function(){
     const that = this
     const startBtn = document.getElementById('start');
-    startBtn.addEventListener("click", function(){
-      that.startCountdown(that.timeLeft, "task");
-    })
+    const pauseBtn = document.getElementById('start');
+    const startBreak = function() {
+      that.startClock(that.breakTimeLeft, "task", startTask );
+    };
+    const startTask = function() {
+      that.startClock(that.taskTimeLeft, "task", startBreak );
+    };
+    startBtn.addEventListener("click", () => startTask() );
+
   },
-  startCountdown: function(time, state){
-    this.updateState(state);
-    let minutes = this.timeLeft[0];
-    let seconds = this.timeLeft[1];
-    const clockDisplay = document.getElementById('timerDisplay');
+  startClock: function(time, newState, callback){
+    //remove event listener from startBtn
+    this.updateState(newState);
+    let minutes = time[0];
+    let seconds = time[1];
+    const that = this;
     const startCountdown = setInterval( function(){
-      //for pause(), add event listener to button. If button is clicked,
-      //use clearIntervals(startCountdown) to stop the timer.
-      //log time to console as a string
+      //add pause event listener
+      const pauseBtn = document.getElementById('pause');
+      const pause = function() {
+        clearInterval(startCountdown);
+      };
+      pauseBtn.addEventListener("click", () => pause() );
       let timeString = String(minutes) + ":";
       if (seconds < 10){
         timeString += "0";
@@ -45,19 +61,32 @@ let Clock = {
         seconds = 59;
         minutes -= 1;
       }
+
       if (minutes < 0){
         clearInterval(startCountdown);
-        playSound('http://soundbible.com/grab.php?id=914&type=mp3');
+        callback();
+
       }
-      clockDisplay.textContent = timeString;
-    }, 1000);
-    this.updateTimeLeft([minutes, seconds]);
-    this.updateState("wait");
+      console.log(timeString);
+    }, 500);
+
+    //update timeLeft and state
+    this.updateTaskTime([minutes, seconds]);
+    this.playSound();
+  },
+  //I just moved this from outside the of the clock object to here.
+  playSound:function(filename){
+    let audio = new Audio(filename);
+    audio.play();
   }
 
 
-  
+
 }
 
 
 Clock.ready();
+
+//pause
+//stop
+//go to break to break at end of time
