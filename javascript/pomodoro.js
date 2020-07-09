@@ -31,9 +31,12 @@ let Clock = {
     const stopBtn = document.getElementById('stop');
     const timerDisplay = document.getElementById('timerDisplay');
     const startBreak = function() {
+      that.updateBreakTime([parseInt(document.getElementById('timeForm').elements[1].value),0]);
       that.startClock(that.breakTimeLeft, "break", startTask );
     };
     const startTask = function() {
+      that.updateTaskTime([parseInt(document.getElementById('timeForm').elements[0].value),0]);
+      console.log(that.taskTimeLeft);
       that.startClock(that.taskTimeLeft, "task", startBreak );
     };
     startBtn.addEventListener("click", () => startTask() );
