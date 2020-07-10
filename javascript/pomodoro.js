@@ -1,46 +1,78 @@
-
-  /*
-    for now we just have a single hardcoded mp3 that plays. can add more functionality (selecting, swapping) in the future
-    I added this function to the clock object as a method -- DS
-  */
-  function playSound(filename){
-        let audio = new Audio(filename);
-        audio.play();
-  }
-
-
 let Clock = {
-  taskTimeLeft: [25,0], // [minutes,seconds]
-  breakTimeLeft: [5,0],
+  taskTimeLeft: [1,0], // [minutes,seconds]
+  breakTimeLeft: [1,0],
   state: "sleep",
-  updateState: function(state) {
-    console.log(state+" started");
-    this.state = state;
-  },
-  updateTaskTime: function(newVal){this.taskTimeLeft = newVal},
-  updateBreakTime: function(newVal){this.breakTimeLeft = newVal},
-  //logs remaining time to console as an array [minutes, seconds]
-  logTimeLeft: function(){console.log(this.timeLeft)},
-  //startCountdown(time, state)
-  //2params: time = array [minutes,seconds] where the countdown should start
-  //state = break or task, new state of the clock
-  ready: function(){
-    const that = this
+  updateState: function(newState) {
+    console.log("current state: " + this.state);
+    console.log("new state: "+newState);
+    this.state = newState;
+    const that = this;
+    //assign buttons to variables
     const startBtn = document.getElementById('start');
-    const pauseBtn = document.getElementById('pause');
+    const pauseResumeBtn = document.getElementById('pause');
     const stopBtn = document.getElementById('stop');
-    const timerDisplay = document.getElementById('timerDisplay');
+
+    //event handlers
     const startBreak = function() {
-      that.updateBreakTime([parseInt(document.getElementById('timeForm').elements[1].value),0]);
+      if (that.state === "task"){
+        pauseResumeBtn.removeEventListener("click", startBreak );
+        pauseResumeBtn.removeEventListener("click", startTask );
+        that.playSound('http://soundbible.com/grab.php?id=914&type=mp3');
+      };
       that.startClock(that.breakTimeLeft, "break", startTask );
     };
     const startTask = function() {
-      that.updateTaskTime([parseInt(document.getElementById('timeForm').elements[0].value),0]);
-      console.log(that.taskTimeLeft);
+      pauseResumeBtn.removeEventListener("click", startTask );
+      startBtn.removeEventListener("click", startTask );
+      if (that.state === "break"){
+        that.playSound('http://soundbible.com/grab.php?id=914&type=mp3');
+      };
       that.startClock(that.taskTimeLeft, "task", startBreak );
     };
-    startBtn.addEventListener("click", () => startTask() );
+    //set event listeners based on current state
+    //READY#######################
+    if (newState === "ready") {
+      startBtn.addEventListener("click", startTask );
+    }
+    //TASK########################
+    else if (newState === "task"){
+      startBtn.removeEventListener("click", startTask );
+      //pause button set inside startCountdown
+    }
+    else if (newState === "break"){
+      startBtn.removeEventListener("click", startBreak );
+      //pause button set inside startCountdown
+    }
+    //PAUSETASK########################
+    else if (newState === "pauseTask") {
+      pauseResumeBtn.addEventListener("click", startTask );
+      pauseResumeBtn.removeEventListener("click", startBreak );
+    }
+    //PAUSEBREAK########################
+    else if (newState === "pauseBreak") {
+      pauseResumeBtn.removeEventListener("click", startTask );
+      pauseResumeBtn.addEventListener("click", startBreak );
+    }
+
   },
+  updateTaskTime: function(newVal){this.taskTimeLeft = newVal},
+  updateBreakTime: function(newVal){this.breakTimeLeft = newVal},
+  logTimeLeft: function(){console.log(this.timeLeft)},
+  start: function(){
+    this.updateState("ready");
+
+  },
+  playSound:function(filename){
+        if(this.soundOn === true) {
+          let audio = new Audio(filename);
+          audio.play();
+        };
+  },
+  soundOn:false,
+  //function: startCountdown(time, state)
+  //params: time = array [minutes,seconds] where the countdown should start
+    //state = break or task, new state of the clock
+    //callback: function executes after clock reaches zero
   startClock: function(time, newState, callback){
     //remove event listener from startBtn
     this.updateState(newState);
@@ -48,21 +80,22 @@ let Clock = {
     let seconds = time[1];
     const that = this;
     let paused = false;
-    const pauseBtn = document.getElementById('pause');
-      const pause = function() {
-        console.log(paused);
-        if (!paused){
-          clearInterval(startCountdown);
-          paused = true;
-        } else {
-          setInterval(startCountdown);
-          paused = false;
-        }
+    const pauseResumeBtn = document.getElementById('pause');
+    const pause = function() {
+      pauseResumeBtn.removeEventListener("click", pause);
+      clearInterval(startCountdown);
+      that.updateTaskTime([minutes, seconds]);
+      console.log(that.taskTimeLeft);
+      if (that.state === "task"){
+        that.updateState("pauseTask");
+      }
+      else if (that.state === "break"){
+        that.updateState("pauseBreak");
       };
-    pauseBtn.addEventListener("click", () => pause() );
+    };
+    pauseResumeBtn.addEventListener("click", pause );
     const startCountdown = setInterval( function(){
-      //add pause event listener
-      
+      const timerDisplay = document.getElementById("timerDisplay")
       let timeString = String(minutes) + ":";
       if (seconds < 10){
         timeString += "0";
@@ -74,27 +107,22 @@ let Clock = {
         seconds = 59;
         minutes -= 1;
       }
-
       if (minutes < 0){
         clearInterval(startCountdown);
         callback();
-
       }
       timerDisplay.textContent = timeString;
-      that.updateTaskTime([minutes, seconds]);
-    }, 1000);
+      console.log(timeString);
+      if (that.state === "task") {
+        that.updateTaskTime([minutes, seconds]);
+      }
+      else if (that.state === "break") {
+        that.updateBreakTime([minutes, seconds]);
+      }
 
-    //update timeLeft and state
-    
-    this.playSound('http://soundbible.com/grab.php?id=914&type=mp3');
+    }, 500);
   },
-
 
 }
 
-
-Clock.ready();
-
-//pause
-//stop
-//go to break to break at end of time
+Clock.start();
