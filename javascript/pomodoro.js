@@ -1,7 +1,7 @@
 
 let Clock = {
-  taskInterval: [0,10],
-  breakInterval: [0,10],
+  taskInterval: [25,0],
+  breakInterval: [5,0],
   taskTimeLeft: [0,0], // [minutes,seconds]
   breakTimeLeft: [0,0],
   updateTaskTimeLeft: function(newVal){this.taskTimeLeft = newVal},
@@ -27,14 +27,14 @@ let Clock = {
       if (that.state === "task" ){
         that.playSound('http://soundbible.com/grab.php?id=914&type=mp3');
       };
-      that.startClock(that.breakTimeLeft, "break", startTask );
+      that.countdown(that.breakTimeLeft, "break", startTask );
     };
     const startTask = function() {
       removeListeners();
       if (that.state === "break"){
         that.playSound('http://soundbible.com/grab.php?id=914&type=mp3');
       };
-      that.startClock(that.taskTimeLeft, "task", startBreak );
+      that.countdown(that.taskTimeLeft, "task", startBreak );
     };
 
     //set event listeners based on current state
@@ -80,7 +80,7 @@ let Clock = {
   //params: time = array [minutes,seconds] where the countdown should start
     //state = break or task, new state of the clock
     //callback: function executes after clock reaches zero
-  startClock: function(time, newState, callback){
+  countdown: function(time, newState, callback){
     //remove event listener from startBtn
     this.updateState(newState);
     let minutes = time[0];
