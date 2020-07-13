@@ -1,8 +1,12 @@
-//test commit
 
 let Clock = {
-  taskTimeLeft: [1,0], // [minutes,seconds]
-  breakTimeLeft: [1,0],
+  taskInterval: [0,10],
+  breakInterval: [0,10],
+  taskTimeLeft: [0,0], // [minutes,seconds]
+  breakTimeLeft: [0,0],
+  updateTaskTimeLeft: function(newVal){this.taskTimeLeft = newVal},
+  updateBreakTimeLeft: function(newVal){this.breakTimeLeft = newVal},
+  logTimeLeft: function(){console.log(this.timeLeft)},
   state: "sleep",
   updateState: function(newState) {
     console.log("current state: " + this.state);
@@ -13,19 +17,21 @@ let Clock = {
     const startBtn = document.getElementById('start');
     const pauseResumeBtn = document.getElementById('pause');
     const stopBtn = document.getElementById('stop');
-
+    const removeListeners = function(){
+      pauseResumeBtn.removeEventListener("click", startBreak );
+      pauseResumeBtn.removeEventListener("click", startTask );
+      startBtn.removeEventListener("click", startTask );
+    };
     //event handlers
     const startBreak = function() {
-      if (that.state === "task"){
-        pauseResumeBtn.removeEventListener("click", startBreak );
-        pauseResumeBtn.removeEventListener("click", startTask );
+      removeListeners();
+      if (that.state === "task" ){
         that.playSound('http://soundbible.com/grab.php?id=914&type=mp3');
       };
       that.startClock(that.breakTimeLeft, "break", startTask );
     };
     const startTask = function() {
-      pauseResumeBtn.removeEventListener("click", startTask );
-      startBtn.removeEventListener("click", startTask );
+      removeListeners();
       if (that.state === "break"){
         that.playSound('http://soundbible.com/grab.php?id=914&type=mp3');
       };
@@ -34,6 +40,8 @@ let Clock = {
     //set event listeners based on current state
     //READY#######################
     if (newState === "ready") {
+      that.taskTimeLeft = that.taskInterval;
+      that.breakTimeLeft = that.breakInterval;
       startBtn.addEventListener("click", startTask );
     }
     //TASK########################
@@ -57,12 +65,9 @@ let Clock = {
     }
 
   },
-  updateTaskTime: function(newVal){this.taskTimeLeft = newVal},
-  updateBreakTime: function(newVal){this.breakTimeLeft = newVal},
-  logTimeLeft: function(){console.log(this.timeLeft)},
+
   start: function(){
     this.updateState("ready");
-
   },
   playSound:function(filename){
         if(this.soundOn === true) {
@@ -84,45 +89,70 @@ let Clock = {
     let paused = false;
     const pauseResumeBtn = document.getElementById('pause');
     const pause = function() {
+      //paused = true;
       pauseResumeBtn.removeEventListener("click", pause);
       clearInterval(startCountdown);
-      that.updateTaskTime([minutes, seconds]);
-      console.log(that.taskTimeLeft);
+
+      console.log("within pause:" + minutes + ", " + seconds);
       if (that.state === "task"){
+        console.log(that.taskTimeLeft);
         that.updateState("pauseTask");
+        //that.updateTaskTimeLeft([minutes, seconds]);
       }
       else if (that.state === "break"){
+        console.log(that.breakTimeLeft);
         that.updateState("pauseBreak");
+        //that.updateBreakTimeLeft([minutes, seconds]);
       };
     };
-    pauseResumeBtn.addEventListener("click", pause );
+
     const startCountdown = setInterval( function(){
+      //update remaining break and task times
+      if (that.state === "task") {
+        that.updateTaskTimeLeft([minutes, seconds]);
+
+        //may not be necessary
+        that.updateBreakTimeLeft(that.breakInterval);
+      }
+      else if (that.state === "break") {
+        that.updateBreakTimeLeft([minutes, seconds]);
+        that.updateTaskTimeLeft(that.taskInterval);
+      }
+      //add event listener to pause button
+      pauseResumeBtn.addEventListener("click", pause );
+
+      //generate string for display
       const timerDisplay = document.getElementById("timerDisplay")
       let timeString = String(minutes) + ":";
       if (seconds < 10){
         timeString += "0";
       }
       timeString += String(seconds);
-      //update timeString
-      seconds -= 1;
-      if(seconds < 0) {
-        seconds = 59;
-        minutes -= 1;
-      }
-      if (minutes < 0){
+
+      console.log(timeString + ", " + that.state);
+      console.log(that.taskTimeLeft + "], ["  + that.breakTimeLeft );
+      timerDisplay.textContent = timeString;
+
+      // check to see if timer has run out
+      // if yes, the end function
+      if (minutes === 0 && seconds === 0){
         clearInterval(startCountdown);
+        console.log("zero");
+        //restore time left on task and break
+        that.taskTimeLeft = that.taskInterval;
+        that.breakTimeLeft = that.breakInterval;
         callback();
       }
-      timerDisplay.textContent = timeString;
-      console.log(timeString);
-      if (that.state === "task") {
-        that.updateTaskTime([minutes, seconds]);
-      }
-      else if (that.state === "break") {
-        that.updateBreakTime([minutes, seconds]);
+      //if no, subtract one second
+      else {
+        seconds -= 1;
+        if(seconds === -1) {
+          seconds = 59;
+          minutes -= 1;
+        };
       }
 
-    }, 500);
+    }, 1000);
   },
 
 }
