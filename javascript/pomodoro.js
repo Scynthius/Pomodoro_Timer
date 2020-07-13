@@ -16,7 +16,6 @@ let Clock = {
     //assign buttons to variables
     const startBtn = document.getElementById('start');
     const pauseResumeBtn = document.getElementById('pause');
-    const stopBtn = document.getElementById('stop');
     const removeListeners = function(){
       pauseResumeBtn.removeEventListener("click", startBreak );
       pauseResumeBtn.removeEventListener("click", startTask );
@@ -37,6 +36,7 @@ let Clock = {
       };
       that.startClock(that.taskTimeLeft, "task", startBreak );
     };
+
     //set event listeners based on current state
     //READY#######################
     if (newState === "ready") {
@@ -46,7 +46,7 @@ let Clock = {
     }
     //TASK########################
     else if (newState === "task"){
-      startBtn.removeEventListener("click", startTask );
+      startBtn.removeEventListener("click", startTask);
       //pause button set inside startCountdown
     }
     else if (newState === "break"){
@@ -75,7 +75,7 @@ let Clock = {
           audio.play();
         };
   },
-  soundOn:false,
+  soundOn:true,
   //function: startCountdown(time, state)
   //params: time = array [minutes,seconds] where the countdown should start
     //state = break or task, new state of the clock
@@ -105,6 +105,15 @@ let Clock = {
         //that.updateBreakTimeLeft([minutes, seconds]);
       };
     };
+    const stopBtn = document.getElementById('stop');
+    const stop = function() {
+      clearInterval(startCountdown);
+      pauseResumeBtn.removeEventListener("click", pause);
+      stopBtn.removeEventListener("click", stop);
+      that.updateState("ready");
+      return;
+    };
+    stopBtn.addEventListener("click", stop);
 
     const startCountdown = setInterval( function(){
       //update remaining break and task times
