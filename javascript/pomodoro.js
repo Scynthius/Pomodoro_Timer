@@ -24,16 +24,10 @@ let Clock = {
     //event handlers
     const startBreak = function() {
       removeListeners();
-      if (that.state === "task" ){
-        that.playSound('http://soundbible.com/grab.php?id=914&type=mp3');
-      };
       that.countdown(that.breakTimeLeft, "break", startTask );
     };
     const startTask = function() {
       removeListeners();
-      if (that.state === "break"){
-        that.playSound('http://soundbible.com/grab.php?id=914&type=mp3');
-      };
       that.countdown(that.taskTimeLeft, "task", startBreak );
     };
 
@@ -145,6 +139,7 @@ let Clock = {
       // check to see if timer has run out
       // if yes, the end function
       if (minutes === 0 && seconds === 0){
+        that.playSound('http://soundbible.com/grab.php?id=914&type=mp3');
         clearInterval(startCountdown);
         console.log("zero");
         //restore time left on task and break
