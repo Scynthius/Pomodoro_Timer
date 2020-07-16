@@ -28,14 +28,17 @@ let Clock = {
     };
     const startTask = function() {
       removeListeners();
+      if (that.state == "ready") {
+        that.taskTimeLeft = [parseInt(timeForm.elements[0].value), 0];
+        that.breakTimeLeft = [parseInt(timeForm.elements[1].value), 0];
+      }
       that.countdown(that.taskTimeLeft, "task", startBreak );
     };
 
     //set event listeners based on current state
     //READY#######################
     if (newState === "ready") {
-      that.taskTimeLeft = that.taskInterval;
-      that.breakTimeLeft = that.breakInterval;
+      timeForm = document.getElementById('timeForm');
       startBtn.addEventListener("click", startTask );
     }
     //TASK########################
