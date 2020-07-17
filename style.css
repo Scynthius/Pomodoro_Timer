@@ -8,3 +8,19 @@ body {
     font-weight: 700;
 	font-size: 120px !important;
 }
+
+.btn-circle.btn-sm { 
+    width: 30px; 
+    height: 30px;  
+    border-radius: 15px; 
+    padding: 0px 0px;
+    font-size: 26px; 
+    border: 1px solid black;
+    background-color: white;
+    text-align: center; 
+    margin: 3px 3px;
+    vertical-align: middle;
+    color: #252526;
+    display: inline-block;
+    line-height: 26px;
+} 

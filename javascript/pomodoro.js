@@ -29,8 +29,12 @@ let Clock = {
     const startTask = function() {
       removeListeners();
       if (that.state == "ready") {
-        that.taskTimeLeft = [parseInt(timeForm.elements[0].value), 0];
-        that.breakTimeLeft = [parseInt(timeForm.elements[1].value), 0];
+        let taskTimeString = document.getElementById("taskTimerDisplay");
+        let breakTimeString = document.getElementById("breakTimerDisplay");
+        let taskParts = taskTimeString.textContent.split(":");
+        let breakParts = breakTimeString.textContent.split(":");
+        that.taskTimeLeft = [parseInt(taskParts[0], 10), 0];
+        that.breakTimeLeft = [parseInt(breakParts[0], 10), 0];
       }
       that.countdown(that.taskTimeLeft, "task", startBreak );
     };
@@ -116,19 +120,18 @@ let Clock = {
       //update remaining break and task times
       if (that.state === "task") {
         that.updateTaskTimeLeft([minutes, seconds]);
-
         //may not be necessary
         that.updateBreakTimeLeft(that.breakInterval);
       }
       else if (that.state === "break") {
         that.updateBreakTimeLeft([minutes, seconds]);
+        const timerDisplay = document.getElementById("breakTimerDisplay");
         that.updateTaskTimeLeft(that.taskInterval);
       }
       //add event listener to pause button
       pauseResumeBtn.addEventListener("click", pause );
 
       //generate string for display
-      const timerDisplay = document.getElementById("timerDisplay")
       let timeString = String(minutes) + ":";
       if (seconds < 10){
         timeString += "0";
@@ -137,7 +140,14 @@ let Clock = {
 
       console.log(timeString + ", " + that.state);
       console.log(that.taskTimeLeft + "], ["  + that.breakTimeLeft );
-      timerDisplay.textContent = timeString;
+      if (that.state === "task") {
+        const timerDisplay = document.getElementById("taskTimerDisplay");
+        timerDisplay.textContent = timeString;
+      } else {
+        const timerDisplay = document.getElementById("breakTimerDisplay");
+        timerDisplay.textContent = timeString;
+      }
+      
 
       // check to see if timer has run out
       // if yes, the end function
