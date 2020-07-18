@@ -1,169 +1,179 @@
 
+//sound file link : 'http://soundbible.com/grab.php?id=914&type=mp3'
+    
 let Clock = {
-  taskInterval: [25,0],
-  breakInterval: [5,0],
-  taskTimeLeft: [0,0], // [minutes,seconds]
-  breakTimeLeft: [0,0],
-  updateTaskTimeLeft: function(newVal){this.taskTimeLeft = newVal},
-  updateBreakTimeLeft: function(newVal){this.breakTimeLeft = newVal},
-  logTimeLeft: function(){console.log(this.timeLeft)},
+  //timer values, [minutes,seconds]
+  taskInterval: [0,10],
+  breakInterval: [0,10],
+  taskTimeLeft: [0,10], 
+  breakTimeLeft: [0,10],
+  //each button respondes differently according to the current state
   state: "sleep",
-  updateState: function(newState) {
-    console.log("current state: " + this.state);
-    console.log("new state: "+newState);
-    this.state = newState;
-    const that = this;
-    //assign buttons to variables
-    const startBtn = document.getElementById('start');
-    const pauseResumeBtn = document.getElementById('pause');
-    const removeListeners = function(){
-      pauseResumeBtn.removeEventListener("click", startBreak );
-      pauseResumeBtn.removeEventListener("click", startTask );
-      startBtn.removeEventListener("click", startTask );
+  //event handlers
+  handleStartClick:function() {
+    if(this.state === "ready"){
+      this.state = "task";
+      this.startClock();
+    }
+    else {
+      console.log("Cannot start from state " + this.state);
     };
-    //event handlers
-    const startBreak = function() {
-      removeListeners();
-      if (that.state === "task" ){
-        that.playSound('http://soundbible.com/grab.php?id=914&type=mp3');
+  },
+  handlePauseResumeClick:function() {
+    let newState;
+    //update state
+    if (this.state != "ready"){
+      switch (this.state) {
+        case "task":
+          this.state = "pauseTask";
+          break;
+        case "break":
+          this.state = "pauseBreak";
+          break;
+        case "pauseTask":
+          this.state = "task";
+          this.startClock();
+          break;
+        case "pauseBreak":
+          this.state = "break";
+          this.startClock();
+          break;
       };
-      that.countdown(that.breakTimeLeft, "break", startTask );
     };
-    const startTask = function() {
-      removeListeners();
-      if (that.state === "break"){
-        that.playSound('http://soundbible.com/grab.php?id=914&type=mp3');
-      };
-      that.countdown(that.taskTimeLeft, "task", startBreak );
-    };
-
-    //set event listeners based on current state
-    //READY#######################
-    if (newState === "ready") {
-      that.taskTimeLeft = that.taskInterval;
-      that.breakTimeLeft = that.breakInterval;
-      startBtn.addEventListener("click", startTask );
-    }
-    //TASK########################
-    else if (newState === "task"){
-      startBtn.removeEventListener("click", startTask);
-      //pause button set inside startCountdown
-    }
-    else if (newState === "break"){
-      startBtn.removeEventListener("click", startBreak );
-      //pause button set inside startCountdown
-    }
-    //PAUSETASK########################
-    else if (newState === "pauseTask") {
-      pauseResumeBtn.addEventListener("click", startTask );
-      pauseResumeBtn.removeEventListener("click", startBreak );
-    }
-    //PAUSEBREAK########################
-    else if (newState === "pauseBreak") {
-      pauseResumeBtn.removeEventListener("click", startTask );
-      pauseResumeBtn.addEventListener("click", startBreak );
-    }
+    console.log("new state: "+ this.state);
 
   },
-
-  start: function(){
-    this.updateState("ready");
+  handleStopClick: function() {
+    if (this.state != "ready"){
+      this.state = "ready";
+      this.restoreTimers();
+    };
+    console.log("new state: " + this.state);
+    //TO DO: This function needs bring back the start button that we had at the very start 
+    
   },
+  //internal functions
   playSound:function(filename){
-        if(this.soundOn === true) {
-          let audio = new Audio(filename);
-          audio.play();
-        };
+    if(this.soundOn === true) {
+      let audio = new Audio(filename);
+      audio.play();
+    };
   },
   soundOn:true,
-  //function: startCountdown(time, state)
-  //params: time = array [minutes,seconds] where the countdown should start
-    //state = break or task, new state of the clock
-    //callback: function executes after clock reaches zero
-  countdown: function(time, newState, callback){
-    //remove event listener from startBtn
-    this.updateState(newState);
-    let minutes = time[0];
-    let seconds = time[1];
-    const that = this;
-    let paused = false;
-    const pauseResumeBtn = document.getElementById('pause');
-    const pause = function() {
-      //paused = true;
-      pauseResumeBtn.removeEventListener("click", pause);
-      clearInterval(startCountdown);
-
-      console.log("within pause:" + minutes + ", " + seconds);
-      if (that.state === "task"){
-        console.log(that.taskTimeLeft);
-        that.updateState("pauseTask");
-        //that.updateTaskTimeLeft([minutes, seconds]);
-      }
-      else if (that.state === "break"){
-        console.log(that.breakTimeLeft);
-        that.updateState("pauseBreak");
-        //that.updateBreakTimeLeft([minutes, seconds]);
-      };
-    };
-    const stopBtn = document.getElementById('stop');
-    const stop = function() {
-      clearInterval(startCountdown);
-      pauseResumeBtn.removeEventListener("click", pause);
-      stopBtn.removeEventListener("click", stop);
-      that.updateState("ready");
-      return;
-    };
-    stopBtn.addEventListener("click", stop);
-
-    const startCountdown = setInterval( function(){
-      //update remaining break and task times
-      if (that.state === "task") {
-        that.updateTaskTimeLeft([minutes, seconds]);
-
-        //may not be necessary
-        that.updateBreakTimeLeft(that.breakInterval);
-      }
-      else if (that.state === "break") {
-        that.updateBreakTimeLeft([minutes, seconds]);
-        that.updateTaskTimeLeft(that.taskInterval);
-      }
-      //add event listener to pause button
-      pauseResumeBtn.addEventListener("click", pause );
-
-      //generate string for display
-      const timerDisplay = document.getElementById("timerDisplay")
-      let timeString = String(minutes) + ":";
-      if (seconds < 10){
-        timeString += "0";
-      }
-      timeString += String(seconds);
-
-      console.log(timeString + ", " + that.state);
-      console.log(that.taskTimeLeft + "], ["  + that.breakTimeLeft );
-      timerDisplay.textContent = timeString;
-
-      // check to see if timer has run out
-      // if yes, the end function
-      if (minutes === 0 && seconds === 0){
-        clearInterval(startCountdown);
-        console.log("zero");
-        //restore time left on task and break
-        that.taskTimeLeft = that.taskInterval;
-        that.breakTimeLeft = that.breakInterval;
-        callback();
-      }
-      //if no, subtract one second
-      else {
-        seconds -= 1;
-        if(seconds === -1) {
-          seconds = 59;
-          minutes -= 1;
-        };
-      }
-
-    }, 1000);
+  restoreTimers: function(){
+    this.taskTimeLeft[0] = this.taskInterval[0];
+    this.taskTimeLeft[1] = this.taskInterval[1];
+    this.breakTimeLeft[0] = this.breakInterval[0];
+    this.breakTimeLeft[1] = this.breakInterval[1];
   },
+  makeTimerString: function(minutes, seconds){
+    let timerString = String(minutes) + ":";
+    if (seconds < 10){
+      timerString += "0"
+    }
+    timerString += String(seconds);
+    return timerString;
+  },
+  // DOM elements  
+  startBtn: document.getElementById('start'),
+  pauseResumeBtn: document.getElementById('pause'),
+  stopBtn: document.getElementById('stop'),
+  timerDisplay: document.getElementById("timerDisplay"),
+  // timer methods
+  startClock: function(){
+      if (this.state === "task" || this.state === "break"){
+        this.clockCountdown();
+      }
+      else {
+        console.log("Cannot start clock from state "+this.state);
+      }
+        
+  },
+  clockCountdown: function() {
+    //decrements the values of the clock that is counting down (break or task) 
+    //based on current state
+    const subtractOneSecond = function(){
+      
+      if(this.state === "break") {
+        this.decrementBreak();
+      }
+      else if (this.state === "task"){
+        this.decrementTask();
+      } 
+      else if (this.state === "pauseTask" || this.state === "pauseBreak" ||
+      this.state === "ready") {
+        clearInterval(countdown);
+      };
 
+    };
+    const countdown = setInterval(subtractOneSecond.bind(this), 1000);
+  },
+  decrementTask: function(){
+    //if timer reaches zero, restore the timers and toggle the state
+    if (this.taskTimeLeft[0] === 0 && this.taskTimeLeft[1] === 0) {
+      this.restoreTimers();
+      this.state = "break";
+      console.log("new state : "+ this.state)
+      let minutes = this.taskInterval[0];
+      let seconds = this.taskInterval[1];
+      this.timerDisplay.innerHTML = this.makeTimerString(minutes, seconds);
+      this.playSound('http://soundbible.com/grab.php?id=914&type=mp3');
+
+    }
+    else{//subtract on second, and update the display
+      if(this.taskTimeLeft[1] === 0) {
+        this.taskTimeLeft[1] = 59;
+        this.taskTimeLeft[0] -= 1;
+      }
+      else {
+        this.taskTimeLeft[1] -= 1;
+      };
+      let minutes = this.taskTimeLeft[0];
+      let seconds = this.taskTimeLeft[1];
+      this.timerDisplay.innerHTML = this.makeTimerString(minutes, seconds);
+    }
+ 
+  },
+  decrementBreak:function(){
+    //if timer reaches zero, restore the timers and toggle the state
+    if (this.breakTimeLeft[0] === 0 && this.breakTimeLeft[1] === 0) {
+      this.restoreTimers();
+      this.state = "task";
+      console.log("new state :task");
+      let minutes = this.breakInterval[0];
+      let seconds = this.breakInterval[1];
+      this.timerDisplay.innerHTML = this.makeTimerString(minutes, seconds);
+      this.playSound('http://soundbible.com/grab.php?id=914&type=mp3');
+
+   }
+   else{//subtract on second, and update the display
+    if(this.breakTimeLeft[1] === 0) {
+      this.breakTimeLeft[1] = 59;
+      this.breakTimeLeft[0] -= 1;
+    }
+    else {
+      this.breakTimeLeft[1] -= 1;
+    };
+    let minutes = this.breakTimeLeft[0];
+      let seconds = this.breakTimeLeft[1];
+      this.timerDisplay.innerHTML = this.makeTimerString(minutes, seconds);
+   }
+  
+  },
+  //starts the clock
+  //updates state to "ready"
+  //adds event listeners to DOM elements
+  start: function(){
+    this.state = "ready";
+    let minutes = this.taskInterval[0];
+    let seconds = this.taskInterval[1];
+    this.timerDisplay.innerHTML = this.makeTimerString(minutes, seconds);
+    this.pauseResumeBtn.addEventListener("click", this.handlePauseResumeClick.bind(this));
+    this.startBtn.addEventListener("click", this.handleStartClick.bind(this));
+    this.stopBtn.addEventListener("click", this.handleStopClick.bind(this));
+    console.log("new state: "+ this.state);
+  }
 }
+
 
 Clock.start();
