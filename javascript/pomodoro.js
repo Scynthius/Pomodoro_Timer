@@ -62,7 +62,6 @@ let Clock = {
       this.restoreTimers();
     };
     console.log("new state: " + this.state);
-    //TO DO: This function needs bring back the start button that we had at the very start 
     
   },
   //internal functions
@@ -123,7 +122,7 @@ let Clock = {
       console.log(this.taskTimeLeft + ", " + this.breakTimeLeft);
 
     };
-    const countdown = setInterval(subtractOneSecond.bind(this), 500);
+    const countdown = setInterval(subtractOneSecond.bind(this), 1000);
   },
   decrementTask: function(){
     //if timer reaches zero, restore the timers and toggle the state
