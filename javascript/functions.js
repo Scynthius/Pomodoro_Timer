@@ -55,6 +55,13 @@ function adjustTime(timer, increase) {
         minVal--;
         timeString.textContent = minVal.toString().concat(":00");
     }
+
+    if (timer == 'task') {
+        Clock.updateTaskInterval(minVal);
+    } else {
+        Clock.updateBreakInterval(minVal);
+    }
+
 }
 
 function toggleTimerDisplay(taskTimer) {
