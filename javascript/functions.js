@@ -38,37 +38,12 @@ function togglePause() {
 
 }
 
-function adjustTime(timer, increase) {
-    if (timer == 'task') {
-        timeString = document.getElementById("taskTimerDisplay");
-    } else {
-        timeString = document.getElementById("breakTimerDisplay");
-    }
-
-    parts = timeString.textContent.split(":");
-    minVal = parseInt(parts[0], 10);
-
-    if (increase) {
-        minVal++;
-        timeString.textContent = minVal.toString().concat(":00");
-    } else {
-        minVal--;
-        timeString.textContent = minVal.toString().concat(":00");
-    }
-
-    if (timer == 'task') {
-        Clock.updateTaskInterval(minVal);
-    } else {
-        Clock.updateBreakInterval(minVal);
-    }
-
-}
 
 function toggleTimerDisplay(taskTimer) {
     timeString = document.getElementById("timerDisplay");
     if(taskTimer) {
-        timeString.textContent = "25:00";
+        //timeString.textContent = "25:00";
     } else {
-        timeString.textContent = "5:00";
+        //timeString.textContent = "5:00";
     }
 }
