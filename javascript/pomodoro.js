@@ -3,6 +3,7 @@
     
 let Clock = {
   //timer values, [minutes,seconds]
+  
   taskInterval: [25,0],
   breakInterval: [5,0],
   incrementTaskInterval:function(){
@@ -27,6 +28,8 @@ let Clock = {
   },
   taskTimeLeft: [0,0], 
   breakTimeLeft: [0,0],
+  skipBreak: true,
+
   //each button respondes differently according to the current state
   state: "sleep",
   //event handlers
@@ -77,6 +80,9 @@ let Clock = {
     };
     console.log("new state: " + this.state);
     
+  },
+  toggleSkipBreak: function(){
+
   },
   //internal functions
   playSound:function(filename){
@@ -166,7 +172,8 @@ let Clock = {
   },
   decrementBreak:function(){
     //if timer reaches zero, restore the timers and toggle the state
-    if (this.breakTimeLeft[0] === 0 && this.breakTimeLeft[1] === 0) {
+    if ((this.breakTimeLeft[0] === 0 && this.breakTimeLeft[1] === 0) || 
+        (this.skipBreak === true)) {
       this.restoreTimers();
       this.state = "task";
       console.log("new state :task");
