@@ -5,11 +5,25 @@ let Clock = {
   //timer values, [minutes,seconds]
   taskInterval: [25,0],
   breakInterval: [5,0],
-  updateTaskInterval:function(minutes){
-    this.taskInterval[0] = minutes;
+  incrementTaskInterval:function(){
+    this.taskInterval[0] = this.taskInterval[0] + 1;
+    this.taskTimeString.innerHTML = this.taskInterval[0] + ":00";
+  },
+  decrementTaskInterval:function(minutes){
+    this.taskInterval[0] = this.taskInterval[0] - 1;
+    this.taskTimeString.innerHTML = this.taskInterval[0] + ":00";
+  },
+  incrementBreakInterval: function(){
+    this.breakInterval[0] = this.breakInterval[0] + 1;
+    this.breakTimeString.innerHTML = this.breakInterval[0] + ":00";
+  },
+  decrementBreakInterval: function(){
+    this.breakInterval[0] = this.breakInterval[0] - 1;
+    this.breakTimeString.innerHTML = this.breakInterval[0] + ":00";
   },
   updateBreakInterval:function(minutes){
     this.breakInterval[0] = minutes;
+    this.breakTimeString.innerHTML = minutes + ":00";
   },
   taskTimeLeft: [0,0], 
   breakTimeLeft: [0,0],
