@@ -28,8 +28,7 @@ let Clock = {
   },
   taskTimeLeft: [0,0], 
   breakTimeLeft: [0,0],
-  skipBreak: true,
-
+  skipBreak: false,
   //each button respondes differently according to the current state
   state: "sleep",
   //event handlers
@@ -42,7 +41,6 @@ let Clock = {
       let breakParts = breakTimeString.textContent.split(":");
       this.taskTimeLeft = [parseInt(taskParts[0], 10), 0];
       this.breakTimeLeft = [parseInt(breakParts[0], 10), 0];
-      
       this.startClock();
     }
     else {
@@ -82,7 +80,14 @@ let Clock = {
     
   },
   toggleSkipBreak: function(){
-
+    if (this.skipBreak === true){
+      this.skipBreakBtn.innerHTML = "skip break off";
+      this.skipBreak = false;
+    }
+    else{
+      this.skipBreakBtn.innerHTML = "skip break on";
+      this.skipBreak = true;
+    }
   },
   //internal functions
   playSound:function(filename){
@@ -107,9 +112,11 @@ let Clock = {
     return timerString;
   },
   // DOM elements  
+  // Buttons:
   startBtn: document.getElementById('start'),
   pauseResumeBtn: document.getElementById('pause'),
   stopBtn: document.getElementById('stop'),
+  skipBreakBtn: document.getElementById('skip-break'),
   //timerDisplay: document.getElementById("timerDisplay"),
   taskTimeString: document.getElementById("taskTimerDisplay"),
   breakTimeString: document.getElementById("breakTimerDisplay"),
@@ -142,7 +149,7 @@ let Clock = {
       console.log(this.taskTimeLeft + ", " + this.breakTimeLeft);
 
     };
-    const countdown = setInterval(subtractOneSecond.bind(this), 1000);
+    const countdown = setInterval(subtractOneSecond.bind(this), 500);
   },
   decrementTask: function(){
     //if timer reaches zero, restore the timers and toggle the state
@@ -172,15 +179,21 @@ let Clock = {
   },
   decrementBreak:function(){
     //if timer reaches zero, restore the timers and toggle the state
-    if ((this.breakTimeLeft[0] === 0 && this.breakTimeLeft[1] === 0) || 
-        (this.skipBreak === true)) {
+    if (this.skipBreak === true){
+      this.breakTimeLeft[0]=0;
+      this.breakTimeLeft[1]=0;
+    }
+    if (this.breakTimeLeft[0] === 0 && this.breakTimeLeft[1] === 0) {
       this.restoreTimers();
       this.state = "task";
       console.log("new state :task");
       let minutes = this.breakInterval[0];
       let seconds = this.breakInterval[1];
       this.breakTimeString.innerHTML = this.makeTimerString(minutes, seconds);
-      this.playSound('http://soundbible.com/grab.php?id=914&type=mp3');
+      if(this.skipBreak === false){
+        this.playSound('http://soundbible.com/grab.php?id=914&type=mp3');
+      }
+      
 
    }
    else{//subtract on second, and update the display
