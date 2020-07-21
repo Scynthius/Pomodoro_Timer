@@ -5,11 +5,31 @@ var express = require('express'),
     handlebars = require('express-handlebars').create({defaultLayout:'main'}),
     passport = require("passport"), 
     flash = require("express-flash"),
-    session = require("express-session"),
-    users = [];
+    session = require("express-session");
 
 const initializePassport = require('./javascript/passport-config');
-initializePassport(passport, email => users.find(user => user.email === email), id => users.find(user => user.id === id));
+initializePassport(
+  passport, 
+  email => {
+    let queryString = "SELECT * FROM `users` WHERE `email`=(?)";
+    mysql.pool.query(queryString, [email], function(err, rows, fields){
+      if (rows.length == 1){
+        for (var item in rows[0]){
+          console.log(item)
+          console.log(rows[0][item])
+        }
+        return rows[0];
+      }});
+  }, 
+  id => {
+    let queryString = "SELECT * FROM `users` WHERE `id`=(?)";
+    mysql.pool.query(queryString, [id], function(err, rows, fields){
+      if (rows.length == 1){
+        return rows[0]['id'];
+      }});
+  })
+
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -85,6 +105,18 @@ function checkAuth(req, res, next){
   }
 }
 
+async function sqlEmail(email) {
+  let queryString = "SELECT * FROM `users` WHERE `email`=(?)";
+  mysql.pool.query(queryString, [email], function(err, rows, fields){
+    if (rows.length == 1){
+      for (var item in rows[0]){
+        console.log(item)
+        console.log(rows[0][item])
+      }
+      return rows[0];
+    }
+  })
+}
 
 app.listen(app.get('port'), function(){
   console.log('Express started on http://localhost:' + app.get('port') + '; press Ctrl-C to terminate.');
