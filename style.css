@@ -24,3 +24,35 @@ body {
     display: inline-block;
     line-height: 26px;
 } 
+
+
+.form-accounts {
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+    background: #acacaf
+  }
+  .form-accounts .checkbox {
+    font-weight: 400;
+  }
+  .form-accounts .form-control {
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+  }
+  .form-accounts .form-control:focus {
+    z-index: 2;
+  }
+  .form-accounts input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  .form-accounts input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
