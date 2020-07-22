@@ -47,3 +47,4 @@ function toggleTimerDisplay(taskTimer) {
         //timeString.textContent = "5:00";
     }
 }
+
