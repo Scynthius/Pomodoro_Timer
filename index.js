@@ -7,19 +7,17 @@ var express = require('express'),
     flash = require("express-flash"),
     session = require("express-session");
 
+    
 const initializePassport = require('./javascript/passport-config');
 initializePassport(
   passport, 
   email => {
     let queryString = "SELECT * FROM `users` WHERE `email`=(?)";
-    mysql.pool.query(queryString, [email], function(err, rows, fields){
+    let result = mysql.pool.query(queryString, [email], function(err, rows, fields){
       if (rows.length == 1){
-        for (var item in rows[0]){
-          console.log(item)
-          console.log(rows[0][item])
-        }
         return rows[0];
       }});
+    return result;
   }, 
   id => {
     let queryString = "SELECT * FROM `users` WHERE `id`=(?)";
@@ -28,8 +26,6 @@ initializePassport(
         return rows[0]['id'];
       }});
   })
-
-
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -50,6 +46,17 @@ app.set('port', 1328);
 
 
 app.get('/', checkAuth, function(req,res){
+  var context = {};
+  GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
+  if (acct != null) {
+    String personName = acct.getDisplayName();
+    String personGivenName = acct.getGivenName();
+    String personFamilyName = acct.getFamilyName();
+    String personEmail = acct.getEmail();
+    String personId = acct.getId();
+    Uri personPhoto = acct.getPhotoUrl();
+  }
+  context.
   res.render('landing');
 });
 
@@ -104,7 +111,7 @@ function checkAuth(req, res, next){
     return next();
   }
 }
-
+/*
 async function sqlEmail(email) {
   let queryString = "SELECT * FROM `users` WHERE `email`=(?)";
   mysql.pool.query(queryString, [email], function(err, rows, fields){
@@ -117,7 +124,7 @@ async function sqlEmail(email) {
     }
   })
 }
-
+*/
 app.listen(app.get('port'), function(){
   console.log('Express started on http://localhost:' + app.get('port') + '; press Ctrl-C to terminate.');
 });
