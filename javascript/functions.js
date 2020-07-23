@@ -22,7 +22,6 @@ function toggleStartStopButtons() {
     }
 }
 
-
 function togglePause() {
     let pausebtn = document.getElementById("pause");
     let btnstate = pausebtn.textContent;
