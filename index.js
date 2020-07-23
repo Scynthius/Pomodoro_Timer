@@ -10,14 +10,16 @@ var express = require('express'),
     
 const initializePassport = require('./javascript/passport-config');
 initializePassport(
-  passport, 
+  passport/*, 
   email => {
+    results = []
     let queryString = "SELECT * FROM `users` WHERE `email`=(?)";
-    let result = mysql.pool.query(queryString, [email], function(err, rows, fields){
+    mysql.pool.query(queryString, [email], function(err, rows, fields){
       if (rows.length == 1){
-        return rows[0];
+        results.push(rows[0]);
       }});
-    return result;
+      
+    
   }, 
   id => {
     let queryString = "SELECT * FROM `users` WHERE `id`=(?)";
@@ -25,7 +27,8 @@ initializePassport(
       if (rows.length == 1){
         return rows[0]['id'];
       }});
-  })
+  }*/
+)
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -42,21 +45,12 @@ app.use(express.static(__dirname));
 
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
-app.set('port', 1328);
+app.set('port', 1330);
 
 
 app.get('/', checkAuth, function(req,res){
   var context = {};
-  GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
-  if (acct != null) {
-    String personName = acct.getDisplayName();
-    String personGivenName = acct.getGivenName();
-    String personFamilyName = acct.getFamilyName();
-    String personEmail = acct.getEmail();
-    String personId = acct.getId();
-    Uri personPhoto = acct.getPhotoUrl();
-  }
-  context.
+  
   res.render('landing');
 });
 
