@@ -6,7 +6,7 @@ body {
 
 #timer-text {
     font-weight: 700;
-	font-size: 120px !important;
+    font-size: 25.5vw;
 }
 
 .btn-circle.btn-sm { 
@@ -25,6 +25,21 @@ body {
     line-height: 26px;
 } 
 
+.nav-item {
+  margin: 0px 5px;
+}
+
+#taskTimerDisplay {
+  font-size: 5rem;
+}
+
+#breakTimerDisplay {
+  font-size: 5rem;
+}
+
+#myTabContent {
+  margin: 0 0 20px 0;
+}
 
 .form-accounts {
     width: 100%;

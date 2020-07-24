@@ -20,28 +20,29 @@
                             <a class="nav-link" id="break-tab" data-toggle="tab" href="#breakTimer" role="tab" aria-controls="breakPage" aria-selected="false">Break Timer</a>
                         </li>
                     </ul>
-                        <div class="tab-content" id="myTabContent">
-                        <div class="tab-pane fade show active" id="taskTimer" role="tabpanel" aria-labelledby="taskPage">
-                            <div class="row justify-content-center"> 
-                                <div class="nav flex-column justify-content-center">
-                                    <button type="button" class="btn btn-info btn-circle btn-sm" id="minutePlusBtnTask" onclick="Clock.incrementTaskInterval()">+</button> 
-                                    <button type="button" class="btn btn-info btn-circle btn-sm" id="minuteMinusBtnTask" onclick="Clock.decrementTaskInterval()">-</button>
-                                </div>
-                                <h1 class="display-1" id="taskTimerDisplay"></h1>
+                    <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="taskTimer" role="tabpanel" aria-labelledby="taskPage">
+                        <div class="row justify-content-center"> 
+                            <div class="nav flex-column justify-content-center">
+                                <button type="button" class="btn btn-info btn-circle btn-sm" id="minutePlusBtnTask" onclick="Clock.incrementTaskInterval()">+</button> 
+                                <button type="button" class="btn btn-info btn-circle btn-sm" id="minuteMinusBtnTask" onclick="Clock.decrementTaskInterval()">-</button>
                             </div>
+                            <h1 class="display-1" id="taskTimerDisplay"></h1>
                         </div>
-                        <div class="tab-pane fade" id="breakTimer" role="tabpanel" aria-labelledby="breakPage">
-                            <div class="row justify-content-center"> 
-                                <div class="nav flex-column justify-content-center">
-                                    <button type="button" class="btn btn-info btn-circle btn-sm" id="minutePlusBtnBreak" onclick="Clock.incrementBreakInterval()">+</button> 
-                                    <button type="button" class="btn btn-info btn-circle btn-sm" id="minuteMinusBtnBreak" onclick="Clock.decrementBreakInterval()">-</button>
-                                </div>
-                                <h1 class="display-1" id="breakTimerDisplay"></h1>
+                    </div>
+                    <div class="tab-pane fade" id="breakTimer" role="tabpanel" aria-labelledby="breakPage">
+                        <div class="row justify-content-center"> 
+                            <div class="nav flex-column justify-content-center">
+                                <button type="button" class="btn btn-info btn-circle btn-sm" id="minutePlusBtnBreak" onclick="Clock.incrementBreakInterval()">+</button> 
+                                <button type="button" class="btn btn-info btn-circle btn-sm" id="minuteMinusBtnBreak" onclick="Clock.decrementBreakInterval()">-</button>
                             </div>
+                            <h1 class="display-1" id="breakTimerDisplay"></h1>
                         </div>
-                        <button id="skip-break" onclick = "Clock.toggleSkipBreak()">skip break</button>
-                    
-                    
+                    </div>
+
+                    <div class="row justify-content-center mt-2">
+                    <button id="skip-break" class="btn btn-outline-warning" onclick = "Clock.toggleSkipBreak()">Skip Break</button>
+                    </div>
                     <div class="row justify-content-center mt-2">
                         <div id="start_button">
                             <button type="button" onclick="toggleStartStopButtons()" class="btn btn-outline-success" id="start">START</button>

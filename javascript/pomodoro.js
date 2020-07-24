@@ -81,11 +81,11 @@ let Clock = {
   },
   toggleSkipBreak: function(){
     if (this.skipBreak === true){
-      this.skipBreakBtn.innerHTML = "skip break off";
+      this.skipBreakBtn.innerHTML = "Skip Break Off";
       this.skipBreak = false;
     }
     else{
-      this.skipBreakBtn.innerHTML = "skip break on";
+      this.skipBreakBtn.innerHTML = "Skip Break On";
       this.skipBreak = true;
     }
   },
