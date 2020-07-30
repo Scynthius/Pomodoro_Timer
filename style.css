@@ -71,3 +71,11 @@ body {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
   }
+
+ .help-button {
+  
+  position: absolute;
+  bottom: 0;
+  right: 0;
+
+}
