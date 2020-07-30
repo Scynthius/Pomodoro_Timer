@@ -5,30 +5,16 @@ var express = require('express'),
     handlebars = require('express-handlebars').create({defaultLayout:'main'}),
     passport = require("passport"), 
     flash = require("express-flash"),
-    session = require("express-session");
-
+    session = require("express-session"),
+    bcrypt = require("bcrypt");
+var users = [];
     
-const initializePassport = require('./javascript/passport-config');
-initializePassport(
-  passport/*, 
-  email => {
-    results = []
-    let queryString = "SELECT * FROM `users` WHERE `email`=(?)";
-    mysql.pool.query(queryString, [email], function(err, rows, fields){
-      if (rows.length == 1){
-        results.push(rows[0]);
-      }});
-      
-    
-  }, 
-  id => {
-    let queryString = "SELECT * FROM `users` WHERE `id`=(?)";
-    mysql.pool.query(queryString, [id], function(err, rows, fields){
-      if (rows.length == 1){
-        return rows[0]['id'];
-      }});
-  }*/
-)
+    const initializePassport = require('./javascript/passport-config')
+    initializePassport(
+      passport,
+      email => users[0].find(user => user.email === email),
+      id => users[0].find(user => user.id === id)
+    )
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -48,40 +34,55 @@ app.set('view engine', 'handlebars');
 app.set('port', 1330);
 
 
-app.get('/', checkAuth, function(req,res){
+app.get('/', function(req,res){
   var context = {};
   
   res.render('landing');
 });
 
-app.get('/login',function(req,res){
-  res.render('login');
-});
 
-app.post('/login', passport.authenticate('local', {
+app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
   successRedirect: '/',
   failureRedirect: '/login',
   failureFlash: true
 }))
 
-app.get('/register', function(req,res){
+app.get('/login',checkNotAuthenticated, (req, res) => {
+  users = [];
+  queryString = "SELECT * FROM users";
+  getQuery(queryString)
+  .then((rows) => {
+    users.push(rows)
+    res.render('login');
+  })
+  
+});
+
+app.get('/register', checkNotAuthenticated, (req, res) => {
   res.render('register')
 })
 
-app.post('/register', function(req, res){
-  try {
-    users.push({
-      id: Date.now().toString(),
-      first_name: req.body.fName,
-      last_name: req.body.lName,
-      email: req.body.email,
-      password: req.body.password
-    });
-    res.redirect('/login');
-  } catch(e) {
-    res.redirect('/register');
-  }
+app.get('/alreadyloggedin', function (req, res) {
+  res.render('alreadyloggedin')
+})
 
+app.post('/register', checkNotAuthenticated, async (req, res) => {
+  try {
+    const hashedPassword = await bcrypt.hash(req.body.password, 10)
+    queryString = "INSERT INTO `users`(`first_name`, `last_name`, `email`, `password`) VALUES ((?), (?), (?), (?))"
+    postQuery(queryString, [req.body.firstName, req.body.lastName, req.body.email, hashedPassword])
+  .then((result) => {
+    res.sendStatus(200)
+  })
+  } catch(error) {
+    console.log(error)
+    res.sendStatus(error)
+  }
+})
+
+app.get('/logout', (req, res) => {
+  req.logOut()
+  res.redirect('/login')
 })
 
 
@@ -97,28 +98,44 @@ app.use(function(err, req, res, next){
   res.render('500');
 });
 
-function checkAuth(req, res, next){
-  if (req.isAuthenticated()){
-    return next();
-  } else {
-    //Redirect if user is not logged in.
-    return next();
+function checkAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next()
   }
+
+  res.redirect('/login')
 }
-/*
-async function sqlEmail(email) {
-  let queryString = "SELECT * FROM `users` WHERE `email`=(?)";
-  mysql.pool.query(queryString, [email], function(err, rows, fields){
-    if (rows.length == 1){
-      for (var item in rows[0]){
-        console.log(item)
-        console.log(rows[0][item])
+
+function checkNotAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return res.redirect('/alreadyloggedin')
+  }
+  next()
+}
+
+function getQuery(query) {
+  return new Promise((resolve, reject) => {
+    mysql.pool.query(query, function (err, rows, fields) {
+      if (err) {
+        return reject(err);
       }
-      return rows[0];
-    }
+      resolve(rows);
+    })
   })
 }
-*/
+
+function postQuery(query, params) {
+  return new Promise((resolve, reject) => {
+    mysql.pool.query(query, params, function (err, rows, fields) {
+      if (err) {
+        return reject(err);
+      }
+      resolve(200);
+    })
+  })
+}
+
+
 app.listen(app.get('port'), function(){
   console.log('Express started on http://localhost:' + app.get('port') + '; press Ctrl-C to terminate.');
 });
