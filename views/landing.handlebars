@@ -80,11 +80,11 @@
         </tr>
       </table><br>
 
-      <form method="post">
+      <form id="newTaskForm">
         <label style="color:white" for="newTaskName">Task:</label><br>
         <input type="text" id="newTaskName" name="newTaskName"><br>
         <label style="color:white" for="newTaskPomodoros">Pomodoros:</label><br>
-        <input type="text" id="newTaskPomodoros" name="newTaskPomodoros"><br>
-        <input type="submit" value="Submit">
+        <input type="number" id="newTaskPomodoros" name="newTaskPomodoros"><br>
+        <input type="button" onclick="addNewTask()" value="Add new task">
       </form>
     </div>
