@@ -1,4 +1,34 @@
 
+
+function Queue() {
+  this.elements = [];
+}
+
+Queue.prototype.enqueueTask = function( element ) {
+  this.elements.push( element );
+};
+
+Queue.prototype.dequeueTask = function( element ) {
+  return this.elements.shift( element );
+};
+
+Queue.prototype.isEmpty = function() {
+  return this.elements.length == 0;
+};
+
+Queue.prototype.peek = function() {
+  return this.isEmpty ? this.elements[0] : undefined;
+};
+
+Queue.prototype.length = function() {
+  return this.elements.length;
+};
+
+let TaskList = new Queue();
+
+
+
+
 //sound file link : 'http://soundbible.com/grab.php?id=914&type=mp3'
     
 let Clock = {
@@ -214,6 +244,7 @@ let Clock = {
    }
   
   },
+
   //starts the clock
   //updates state to "ready"
   //adds event listeners to DOM elements
@@ -223,6 +254,7 @@ let Clock = {
     let task_seconds = this.taskInterval[1];
     let break_minutes = this.breakInterval[0];
     let break_seconds = this.breakInterval[1];
+    
     this.taskTimeString.innerHTML = this.makeTimerString(task_minutes, task_seconds);
     this.breakTimeString.innerHTML = this.makeTimerString(break_minutes, break_seconds);
     this.pauseResumeBtn.addEventListener("click", this.handlePauseResumeClick.bind(this));
