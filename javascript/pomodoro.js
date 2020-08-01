@@ -41,16 +41,20 @@ let Clock = {
     this.taskTimeString.innerHTML = this.taskInterval[0] + ":00";
   },
   decrementTaskInterval:function(minutes){
+    if(this.taskInterval[0] > 1){
     this.taskInterval[0] = this.taskInterval[0] - 1;
     this.taskTimeString.innerHTML = this.taskInterval[0] + ":00";
+    }
   },
   incrementBreakInterval: function(){
     this.breakInterval[0] = this.breakInterval[0] + 1;
     this.breakTimeString.innerHTML = this.breakInterval[0] + ":00";
   },
   decrementBreakInterval: function(){
+    if(this.breakInterval[0] > 1){
     this.breakInterval[0] = this.breakInterval[0] - 1;
     this.breakTimeString.innerHTML = this.breakInterval[0] + ":00";
+    }
   },
   updateBreakInterval:function(minutes){
     this.breakInterval[0] = minutes;

@@ -31,7 +31,7 @@ app.use(express.static(__dirname));
 
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
-app.set('port', 1330);
+app.set('port', 13227);
 
 
 app.get('/', function(req,res){
@@ -66,14 +66,16 @@ app.get('/alreadyloggedin', function (req, res) {
   res.render('alreadyloggedin')
 })
 
-app.post('/register', checkNotAuthenticated, async (req, res) => {
+app.post('/register', checkNotAuthenticated, (req, res) => {
   try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10)
-    queryString = "INSERT INTO `users`(`first_name`, `last_name`, `email`, `password`) VALUES ((?), (?), (?), (?))"
-    postQuery(queryString, [req.body.firstName, req.body.lastName, req.body.email, hashedPassword])
-  .then((result) => {
-    res.sendStatus(200)
-  })
+    bcrypt.hash(req.body.password, 10, function(err, hash){
+      queryString = "INSERT INTO `users`(`first_name`, `last_name`, `email`, `password`) VALUES ((?), (?), (?), (?))"
+      postQuery(queryString, [req.body.firstName, req.body.lastName, req.body.email, hash])
+      .then((result) => {
+        res.sendStatus(200)
+    })
+    })
+    
   } catch(error) {
     console.log(error)
     res.sendStatus(error)
@@ -136,5 +138,5 @@ function postQuery(query, params) {
 }
 
 
-app.listen(process.env.PORT || 3000, 
+app.listen(process.env.PORT || app.get('port'), 
 	() => console.log("Server is running..."));
