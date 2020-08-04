@@ -1,9 +1,74 @@
 
+
+function Queue() {
+  this.elements = [];
+}
+
+Queue.prototype.enqueueTask = function( task ) {
+  this.elements.push( task );
+};
+
+Queue.prototype.dequeueTask = function() {
+  return this.elements.shift();
+};
+
+Queue.prototype.isEmpty = function() {
+  return this.elements.length == 0;
+};
+
+Queue.prototype.peek = function() {
+  return this.isEmpty ? this.elements[0] : undefined;
+};
+
+Queue.prototype.length = function() {
+  return this.elements.length;
+};
+
+let TaskList = new Queue();
+
+function addNewTask() {
+  let name = document.getElementsByName("newTaskName")[0].value;
+  let pomodoros = document.getElementsByName("newTaskPomodoros")[0].value;
+  document.getElementById("newTaskForm").reset();
+
+  if (newTaskName && newTaskPomodoros) {
+    let newTask = {name: name, pomodoros: pomodoros};
+    TaskList.enqueueTask(newTask);
+    addTaskToTable(newTask);
+  }
+}
+
+function addTaskToTable(newTask) {
+  var taskTable = document.getElementById("taskList");
+  var newRow = taskTable.insertRow(TaskList.length());
+  var nameCell = newRow.insertCell(0);
+  var pomodorosCell = newRow.insertCell(1);
+  nameCell.innerHTML = newTask.name;
+  pomodorosCell.innerHTML = newTask.pomodoros;
+}
+
+function removeTaskFromTable() {
+  document.getElementById("taskList").deleteRow(1);
+}
+
+function decreaseTaskPomodoros() {
+  if (!TaskList.isEmpty()) {
+    TaskList.peek().pomodoros--;
+    if (TaskList.peek().pomodoros == 0) {
+      removeTaskFromTable();
+    } else {
+      document.getElementById("taskList").rows[1].cells[1].innerHTML = TaskList.peek().pomodoros;
+    }
+  }
+}
+
+
+
 //sound file link : 'http://soundbible.com/grab.php?id=914&type=mp3'
-    
+
 let Clock = {
   //timer values, [minutes,seconds]
-  
+
   taskInterval: [25,0],
   breakInterval: [5,0],
   incrementTaskInterval:function(){
@@ -30,7 +95,7 @@ let Clock = {
     this.breakInterval[0] = minutes;
     this.breakTimeString.innerHTML = minutes + ":00";
   },
-  taskTimeLeft: [0,0], 
+  taskTimeLeft: [0,0],
   breakTimeLeft: [0,0],
   skipBreak: false,
   //each button respondes differently according to the current state
@@ -81,7 +146,7 @@ let Clock = {
       this.restoreTimers();
     };
     console.log("new state: " + this.state);
-    
+
   },
   toggleSkipBreak: function(){
     if (this.skipBreak === true){
@@ -115,7 +180,7 @@ let Clock = {
     timerString += String(seconds);
     return timerString;
   },
-  // DOM elements  
+  // DOM elements
   // Buttons:
   startBtn: document.getElementById('start'),
   pauseResumeBtn: document.getElementById('pause'),
@@ -132,19 +197,19 @@ let Clock = {
       else {
         console.log("Cannot start clock from state "+this.state);
       }
-        
+
   },
   clockCountdown: function() {
-    //decrements the values of the clock that is counting down (break or task) 
+    //decrements the values of the clock that is counting down (break or task)
     //based on current state
     const subtractOneSecond = function(){
-      
+
       if(this.state === "break") {
         this.decrementBreak();
       }
       else if (this.state === "task"){
         this.decrementTask();
-      } 
+      }
       else if (this.state === "pauseTask" || this.state === "pauseBreak" ||
       this.state === "ready") {
         clearInterval(countdown);
@@ -165,6 +230,7 @@ let Clock = {
       let seconds = this.taskInterval[1];
       this.taskTimeString.innerHTML = this.makeTimerString(minutes, seconds);
       this.playSound('http://soundbible.com/grab.php?id=914&type=mp3');
+      decreaseTaskPomodoros();
 
     }
     else{//subtract on second, and update the display
@@ -179,7 +245,7 @@ let Clock = {
       let seconds = this.taskTimeLeft[1];
       this.taskTimeString.innerHTML = this.makeTimerString(minutes, seconds);
     }
- 
+
   },
   decrementBreak:function(){
     //if timer reaches zero, restore the timers and toggle the state
@@ -197,7 +263,7 @@ let Clock = {
       if(this.skipBreak === false){
         this.playSound('http://soundbible.com/grab.php?id=914&type=mp3');
       }
-      
+
 
    }
    else{//subtract on second, and update the display
@@ -212,8 +278,9 @@ let Clock = {
       let seconds = this.breakTimeLeft[1];
       this.breakTimeString.innerHTML = this.makeTimerString(minutes, seconds);
    }
-  
+
   },
+
   //starts the clock
   //updates state to "ready"
   //adds event listeners to DOM elements
@@ -223,6 +290,7 @@ let Clock = {
     let task_seconds = this.taskInterval[1];
     let break_minutes = this.breakInterval[0];
     let break_seconds = this.breakInterval[1];
+
     this.taskTimeString.innerHTML = this.makeTimerString(task_minutes, task_seconds);
     this.breakTimeString.innerHTML = this.makeTimerString(break_minutes, break_seconds);
     this.pauseResumeBtn.addEventListener("click", this.handlePauseResumeClick.bind(this));

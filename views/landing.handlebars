@@ -25,18 +25,24 @@
                     </ul>
                     <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="taskTimer" role="tabpanel" aria-labelledby="taskPage">
-                        <div class="row justify-content-center"> 
+                        <div class="row justify-content-center">
+                            <div class="nav flex-row">
+                                <p class="mr-1">Current Task: </p>
+                                <p id="currentTaskName">No Task</p>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
                             <div class="nav flex-column justify-content-center">
-                                <button type="button" class="btn btn-info btn-circle btn-sm" id="minutePlusBtnTask" onclick="Clock.incrementTaskInterval()">+</button> 
+                                <button type="button" class="btn btn-info btn-circle btn-sm" id="minutePlusBtnTask" onclick="Clock.incrementTaskInterval()">+</button>
                                 <button type="button" class="btn btn-info btn-circle btn-sm" id="minuteMinusBtnTask" onclick="Clock.decrementTaskInterval()">-</button>
                             </div>
                             <h1 class="display-1" id="taskTimerDisplay"></h1>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="breakTimer" role="tabpanel" aria-labelledby="breakPage">
-                        <div class="row justify-content-center"> 
+                        <div class="row justify-content-center">
                             <div class="nav flex-column justify-content-center">
-                                <button type="button" class="btn btn-info btn-circle btn-sm" id="minutePlusBtnBreak" onclick="Clock.incrementBreakInterval()">+</button> 
+                                <button type="button" class="btn btn-info btn-circle btn-sm" id="minutePlusBtnBreak" onclick="Clock.incrementBreakInterval()">+</button>
                                 <button type="button" class="btn btn-info btn-circle btn-sm" id="minuteMinusBtnBreak" onclick="Clock.decrementBreakInterval()">-</button>
                             </div>
                             <h1 class="display-1" id="breakTimerDisplay"></h1>
