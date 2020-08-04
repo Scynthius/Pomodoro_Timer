@@ -34,7 +34,6 @@ function togglePause() {
         pausebtn.classList.remove("btn-outline-success");
         pausebtn.classList.add("btn-outline-secondary");
     }
-
 }
 
 

@@ -31,13 +31,19 @@ app.use(express.static(__dirname));
 
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
-app.set('port', 13355);
+app.set('port', process.argv[2] || 13227);
 
 
 app.get('/', function(req,res){
   var context = {};
-  
-  res.render('landing');
+  try{
+    context.username = req.user.first_name;
+    context.loginButton = "Account"
+  } catch(e) {
+    context.username = "Visitor"
+    context.loginButton = "Login"
+  }
+  res.render('landing', context);
 });
 
 
@@ -110,7 +116,7 @@ function checkAuthenticated(req, res, next) {
 
 function checkNotAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
-    return res.redirect('/alreadyloggedin')
+    return res.redirect('/account')
   }
   next()
 }

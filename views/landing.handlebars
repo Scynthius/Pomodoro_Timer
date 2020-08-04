@@ -1,4 +1,7 @@
     <section class="container-fluid w-75">
+        <div class="row justify-content-center">
+            <p style="color: white;">Welcome, {{username}}</p>
+        </div>
         <div class="row justify-content-center" id="clock-container">
             <div class="col-sm-8 col-lg-5 p-3" id="clock-module">
                 <div class="card">
@@ -21,6 +24,12 @@
                     </ul>
                     <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="taskTimer" role="tabpanel" aria-labelledby="taskPage">
+                        <div class="row justify-content-center">
+                            <div class="nav flex-row">
+                                <p class="mr-1">Current Task: </p>
+                                <p id="currentTaskName">No Task</p>
+                            </div>
+                        </div>
                         <div class="row justify-content-center">
                             <div class="nav flex-column justify-content-center">
                                 <button type="button" class="btn btn-info btn-circle btn-sm" id="minutePlusBtnTask" onclick="Clock.incrementTaskInterval()">+</button>
@@ -51,6 +60,12 @@
                             <button type="button" class="btn btn-outline-danger" id="stop" onclick="toggleStartStopButtons()">STOP</button>
                         </div>
                     </div>
+                    <button class="btn btn-info btn-circle btn-sm help-button" data-toggle="modal" data-target="#howToPanel">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-question-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="M5.25 6.033h1.32c0-.781.458-1.384 1.36-1.384.685 0 1.313.343 1.313 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.007.463h1.307v-.355c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.326 0-2.786.647-2.754 2.533zm1.562 5.516c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
@@ -99,3 +114,26 @@
         <input type="button" onclick="addNewTask()" value="Add new task">
       </form>
     </div>
+        
+        <div class="modal fade" id="howToPanel" tabindex="-1" role="dialog" aria-labelledby="howToPanel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                Instructions
+                            </div>
+                            <div class="modal-body">
+                                How to be more productive with our app:
+                                Start by deciding how much time you'd like to spend on a task. Then use the 
+                                + and - buttons to change the timer to match. Click on break timer and do the same thing
+                                based on how long you'd like to rest after your focus session. Once you hit start, get to 
+                                work! If you're logged in, using the pause and stop buttons during an active session will 
+                                deduct points from your productivity score, so try and stay on task to score big!
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Got it!</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+    </section>
