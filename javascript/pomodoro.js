@@ -26,6 +26,12 @@ Queue.prototype.length = function() {
 
 let TaskList = new Queue();
 
+function addToQueue(){
+  //Get data from dropdown.selected and add row to table
+  
+}
+
+
 function addNewTask() {
   let name = document.getElementsByName("newTaskName")[0].value;
   let pomodoros = document.getElementsByName("newTaskPomodoros")[0].value;
@@ -33,6 +39,8 @@ function addNewTask() {
   let taskTime = document.getElementsByName("newTaskTime")[0].value;
   let breakTime = document.getElementsByName("newBreakTime")[0].value;
   document.getElementById("newTaskForm").reset();
+
+  //Save new task to database and update dropdown menu.
 
   if (newTaskName && newTaskPomodoros && newTaskCategory && newTaskTime && newBreakTime) {
     let newTask = {name: name, pomodoros: pomodoros, category: category, taskTime: taskTime, breakTime: breakTime};

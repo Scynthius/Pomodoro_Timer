@@ -39,11 +39,20 @@ app.get('/', function(req,res){
   try{
     context.username = req.user.first_name;
     context.loginButton = "Account"
+    context.loggedIn = true;
   } catch(e) {
     context.username = "Visitor"
     context.loginButton = "Login"
+    context.loggedIn = false;
   }
-  res.render('landing', context);
+  tasks = [];
+  queryString = "SELECT * FROM tasks";
+  getQuery(queryString)
+  .then((rows) => {
+    tasks.push(rows);
+    context.task = tasks[0];
+    res.render('landing', context);
+  })
 });
 
 
@@ -70,6 +79,10 @@ app.get('/register', checkNotAuthenticated, (req, res) => {
 
 app.get('/alreadyloggedin', function (req, res) {
   res.render('alreadyloggedin')
+})
+
+app.get('/account', (req, res) => {
+  res.render('account');
 })
 
 app.post('/register', checkNotAuthenticated, (req, res) => {
