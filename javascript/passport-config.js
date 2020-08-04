@@ -8,7 +8,6 @@ function initialize(passport, getUserByEmail, getUserById) {
     if (user == null) {
       return done(null, false, { message: 'No user with that email' })
     }
-    console.log(user)
     try {
       bcrypt.compare(password, user.password).then(function(result){
         if(result){
