@@ -69,7 +69,7 @@ function decreaseTaskPomodoros() {
     if (TaskList.peek().pomodoros == 0) {
       removeTaskFromTable();
     } else {
-      document.getElementById("taskList").rows[1].cells[1].innerHTML = TaskList.peek().pomodoros;
+      document.getElementById("taskList").rows[1].cells[2].innerHTML = TaskList.peek().pomodoros;
     }
   }
 }
@@ -137,7 +137,8 @@ let Clock = {
         //Get value of break time
         this.updateBreakInterval(taskTable.rows[1].cells[4].textContent);
         this.breakTimeLeft = [taskTable.rows[1].cells[4].textContent];
-      } 
+        document.getElementById("currentTaskName").innerHTML = taskTable.rows[1].cells[0].textContent;
+      }
       this.startClock();
     }
     else {
@@ -195,6 +196,19 @@ let Clock = {
   },
   soundOn:true,
   restoreTimers: function(){
+    var taskTable = document.getElementById("taskList");
+    if (taskTable.rows[1].cells[3].textContent != "" && taskTable.rows[1].cells[4].textContent != "") {
+      console.log("Grabbing from table...");
+      //Get value of task time
+      this.updateTaskInterval(taskTable.rows[1].cells[3].textContent);
+      this.taskTimeLeft = [taskTable.rows[1].cells[3].textContent, 0];
+      //Get value of break time
+      this.updateBreakInterval(taskTable.rows[1].cells[4].textContent);
+      this.breakTimeLeft = [taskTable.rows[1].cells[4].textContent];
+      document.getElementById("currentTaskName").innerHTML = taskTable.rows[1].cells[0].textContent;
+    } else {
+      document.getElementById("currentTaskName").innerHTML = "No Task";
+    }
     this.taskTimeLeft[0] = this.taskInterval[0];
     this.taskTimeLeft[1] = this.taskInterval[1];
     this.breakTimeLeft[0] = this.breakInterval[0];
@@ -251,6 +265,7 @@ let Clock = {
   decrementTask: function(){
     //if timer reaches zero, restore the timers and toggle the state
     if (this.taskTimeLeft[0] === 0 && this.taskTimeLeft[1] === 0) {
+      decreaseTaskPomodoros();
       this.restoreTimers();
       this.state = "break";
       console.log("new state : "+ this.state)
@@ -258,8 +273,6 @@ let Clock = {
       let seconds = this.taskInterval[1];
       this.taskTimeString.innerHTML = this.makeTimerString(minutes, seconds);
       this.playSound('http://soundbible.com/grab.php?id=914&type=mp3');
-      decreaseTaskPomodoros();
-
     }
     else{//subtract on second, and update the display
       if(this.taskTimeLeft[1] === 0) {
