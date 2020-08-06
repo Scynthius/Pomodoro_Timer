@@ -45,12 +45,15 @@ app.get('/', function(req,res){
     context.loginButton = "Login"
     context.loggedIn = false;
   }
-  tasks = [];
   queryString = "SELECT * FROM tasks";
+  newQueryString = "SELECT * FROM categories";
   getQuery(queryString)
   .then((rows) => {
-    tasks.push(rows);
-    context.task = tasks[0];
+    context.task = rows;
+  }).then(() => {
+    return getQuery(newQueryString);
+  }).then((rows) => {
+    context.category = rows;
     res.render('landing', context);
   })
 });
@@ -158,4 +161,4 @@ function postQuery(query, params) {
 
 
 app.listen(process.env.PORT || app.get('port'), 
-	() => console.log("Server is running..."));
+	() => console.log("Server is running on port", app.get('port'), "..."));

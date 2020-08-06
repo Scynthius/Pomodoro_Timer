@@ -88,7 +88,10 @@
                     <option value={{{t.id}}}>{{{t.name}}}</option>
                     {{/each}}
                 </select>
-            <input type="button" onclick="addNewTask()" value="Add new task">
+            <input type="button" onclick="addNewTask()" value="Add task to queue">
+        </div>
+        <div class="row justify-content-center">
+            <input type="button" data-toggle="modal" data-target="#newTaskModal" value="Create a new task">
         </div>
     
         <div class="row justify-content-center">
@@ -125,7 +128,13 @@
                 <label style="color:white" for="newTaskName">Task:</label><br>
                 <input type="text" id="newTaskName" name="newTaskName"><br>
                 <label style="color:white" for="newTaskCategory">Category:</label><br>
-                <input type="text" id="newTaskCategory" name="newTaskCategory"><br>
+                <select name="newTaskCategory" id="newTaskCategory">
+                <option value="0" selected>Select A Category</option>
+                    {{#each category as |c|}}
+                    <option value={{{c.id}}}>{{{c.name}}}</option>
+                    {{/each}}
+                </select>
+                <br>
                 <label style="color:white" for="newTaskPomodoros">Pomodoros:</label><br>
                 <input type="number" id="newTaskPomodoros" name="newTaskPomodoros"><br>
                 <label style="color:white" for="newTaskTime">Task Time: (mins)</label><br>
