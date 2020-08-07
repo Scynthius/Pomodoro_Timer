@@ -60,10 +60,11 @@ app.get('/', function(req,res){
 });
 
 app.put('/', (req, res) => {
-  var user = req.user.first_name;
-  var userid = users[0].find(user => user.id === id);
-  var queryString = "INSERT INTO tasks (name, task_time, break_time, userid, categoryid) VALUES ((?), (?), (?), (?), (SELECT id FROM categories WHERE name = (?)));";
-  postQuery(queryString, [req.body.name, req.body.taskTime, req.body.breakTime, userid, category])
+  var useremail = req.user.email;
+  var user = users[0].find(user => user.email === useremail);
+  var userid = user.id
+  var queryString = "INSERT INTO tasks (name, task_time, break_time, userid, categoryid) VALUES ((?), (?), (?), (?), (?));";
+  postQuery(queryString, [req.body.name, req.body.taskTime, req.body.breakTime, userid, req.body.category])
   .then((result) => {
     res.sendStatus(200);
   })
