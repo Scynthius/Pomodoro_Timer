@@ -31,7 +31,6 @@ function addToQueue(){
   
 }
 
-
 function addNewTask() {
   //Save new task to database and update dropdown menu.
   let name = document.getElementsByName("newTaskName")[0].value;
@@ -39,18 +38,26 @@ function addNewTask() {
   let category = document.getElementsByName("newTaskCategory")[0].value;
   let taskTime = document.getElementsByName("newTaskTime")[0].value;
   let breakTime = document.getElementsByName("newBreakTime")[0].value;
-  document.getElementById("newTaskForm").reset();
-
-  
-  if (newTaskName && newTaskPomodoros && newTaskCategory && newTaskTime && newBreakTime) {
-    let newTask = {name: name, pomodoros: pomodoros, category: category, taskTime: taskTime, breakTime: breakTime};
-    // -- \/ ADD TASK TO SQL DATABASE \/ --
-    //queryString = "INSERT INTO `tasks`(`name`, `task_time`, `break_time`, `userid` `categoryid`) VALUES ((?), (?), (?), (?), (?))";
-
-    //These two lines need to move
-    TaskList.enqueueTask(newTask);
-    addTaskToTable(newTask);
-  }
+  var data = {
+    "name"              : name,
+    "pomodoros"         : pomodoros,
+    "category"          : category,
+    "taskTime"          : taskTime,
+    "breakTime"         : breakTime
+  };
+  var request = new XMLHttpRequest();
+  request.open('PUT', '/', true);
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.addEventListener('load', function () {
+      if (request.status >= 200 && request.status < 400) {
+          $('#newTaskForm').reset();
+      } else {
+          console.log('Error');
+      }
+  });
+  request.send(JSON.stringify(data));
+  TaskList.enqueueTask(newTask);
+  addTaskToTable(newTask);
 }
 
 function addTaskToTable(newTask) {

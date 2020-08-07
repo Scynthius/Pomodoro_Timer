@@ -59,6 +59,15 @@ app.get('/', function(req,res){
   })
 });
 
+app.put('/', (req, res) => {
+  var user = req.user.first_name;
+  var userid = users[0].find(user => user.id === id);
+  var queryString = "INSERT INTO tasks (name, task_time, break_time, userid, categoryid) VALUES ((?), (?), (?), (?), (SELECT id FROM categories WHERE name = (?)));";
+  postQuery(queryString, [req.body.name, req.body.taskTime, req.body.breakTime, userid, category])
+  .then((result) => {
+    res.sendStatus(200);
+  })
+})
 
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
   successRedirect: '/',
@@ -123,14 +132,6 @@ app.use(function(err, req, res, next){
   res.render('500');
 });
 
-function checkAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next()
-  }
-
-  res.redirect('/login')
-}
-
 function checkNotAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return res.redirect('/account')
@@ -162,7 +163,6 @@ function postQuery(query, params) {
     })
   })
 }
-
 
 app.listen(process.env.PORT || app.get('port'), 
 	() => console.log("Server is running on port", app.get('port'), "..."));
