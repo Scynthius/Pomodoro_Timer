@@ -60,7 +60,7 @@ app.get('/', function(req,res){
   })
 });
 
-app.put('/', (req, res) => {
+app.put('/', (req, res, next) => {
   var useremail = req.user.email;
   var user = users[0].find(user => user.email === useremail);
   var userid = user.id;
@@ -87,16 +87,7 @@ app.put('/', (req, res) => {
       res.sendStatus(200);
     })
   }
-})
-  
-  postQuery(queryString, [req.body.name, req.body.taskTime, req.body.breakTime, userid, req.body.category])
-  .then((result) => {
-    if (newCatQuery != null){
-      
-    }
-    res.sendStatus(200);
-  })
-})
+});
 
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
   successRedirect: '/',
