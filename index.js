@@ -8,6 +8,7 @@ var express = require('express'),
     session = require("express-session"),
     bcrypt = require("bcrypt");
 var users = [];
+var tasks = [];
     
     const initializePassport = require('./javascript/passport-config')
     initializePassport(
@@ -138,6 +139,7 @@ function checkNotAuthenticated(req, res, next) {
 }
 
 function getQuery(query) {
+  //Takes a SQL statement as an argument and returns a promise which will provide the resulting SQL data array.
   return new Promise((resolve, reject) => {
     mysql.pool.query(query, function (err, rows, fields) {
       if (err) {
@@ -149,6 +151,8 @@ function getQuery(query) {
 }
 
 function postQuery(query, params) {
+  //Takes a SQL statement and an array of parameters to inject into the statement. Returns a promise 
+  // which returns the resulting SQL data array.
   return new Promise((resolve, reject) => {
     mysql.pool.query(query, params, function (err, rows, fields) {
       if (err) {
