@@ -51,6 +51,7 @@ app.get('/', function(req,res){
   getQuery(queryString)
   .then((rows) => {
     context.task = rows;
+    tasks.push(rows);
   }).then(() => {
     return getQuery(newQueryString);
   }).then((rows) => {
@@ -60,11 +61,39 @@ app.get('/', function(req,res){
 });
 
 app.put('/', (req, res) => {
-  var user = req.user.first_name;
-  var userid = users[0].find(user => user.id === id);
-  var queryString = "INSERT INTO tasks (name, task_time, break_time, userid, categoryid) VALUES ((?), (?), (?), (?), (SELECT id FROM categories WHERE name = (?)));";
-  postQuery(queryString, [req.body.name, req.body.taskTime, req.body.breakTime, userid, category])
+  var useremail = req.user.email;
+  var user = users[0].find(user => user.email === useremail);
+  var userid = user.id;
+  var status = 200;
+  var queryString = "INSERT INTO tasks (name, task_time, break_time, userid, categoryid) VALUES ((?), (?), (?), (?), (?));";
+  if (req.body.newCategory){
+    var newCatQuery = "INSERT INTO categories (name, userid) VALUES ((?), (?));";
+    var getCatIDQuery = "SELECT MAX(id) FROM categories;";
+    postQuery(newCatQuery, [req.body.category, userid])
+    .then((result) => {
+      status = 200;
+    }).then(() => {
+      return getQuery(getCatIDQuery);
+    }).then((rows) => {
+      let category = rows[0].id;
+    }).then(() => {
+      postQuery(queryString, [req.body.name, req.body.taskTime, req.body.breakTime, userid, category])
+    }).then((result) => {
+      res.sendStatus(200);
+    })
+  } else {
+    postQuery(queryString, [req.body.name, req.body.taskTime, req.body.breakTime, userid, req.body.category])
+    .then((result) => {
+      res.sendStatus(200);
+    })
+  }
+})
+  
+  postQuery(queryString, [req.body.name, req.body.taskTime, req.body.breakTime, userid, req.body.category])
   .then((result) => {
+    if (newCatQuery != null){
+      
+    }
     res.sendStatus(200);
   })
 })

@@ -35,29 +35,39 @@ function addNewTask() {
   //Save new task to database and update dropdown menu.
   let name = document.getElementsByName("newTaskName")[0].value;
   let pomodoros = document.getElementsByName("newTaskPomodoros")[0].value;
-  let category = document.getElementsByName("newTaskCategory")[0].value;
   let taskTime = document.getElementsByName("newTaskTime")[0].value;
   let breakTime = document.getElementsByName("newBreakTime")[0].value;
+  let newCategory = document.getElementById("addNewCategory");
+  if(newCategory.hidden){
+    let category = document.getElementsById("newTaskCategory").value;
+    let newCategory = false;
+  } else {
+    let category = document.getElementsById("newCategoryInput").value;
+    let newCategory = true;
+  }
   var data = {
     "name"              : name,
     "pomodoros"         : pomodoros,
     "category"          : category,
     "taskTime"          : taskTime,
-    "breakTime"         : breakTime
+    "breakTime"         : breakTime,
+    "newCategory"       : newCategory
   };
+
   var request = new XMLHttpRequest();
   request.open('PUT', '/', true);
   request.setRequestHeader('Content-Type', 'application/json');
   request.addEventListener('load', function () {
       if (request.status >= 200 && request.status < 400) {
           $('#newTaskForm').reset();
+          let newTask = {name: name, pomodoros: pomodoros, category: category, taskTime: taskTime, breakTime: breakTime};
+          TaskList.enqueueTask(newTask);
+          addTaskToTable(newTask);
       } else {
           console.log('Error');
       }
   });
   request.send(JSON.stringify(data));
-  TaskList.enqueueTask(newTask);
-  addTaskToTable(newTask);
 }
 
 function addTaskToTable(newTask) {

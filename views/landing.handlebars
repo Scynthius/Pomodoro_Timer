@@ -124,16 +124,23 @@
                 </button>
             </div>
             <div id="newTaskModalBody" class="modal-body">
-               <form id="newTaskForm">
+               <form id="newTaskForm" class="form">
                 <label style="color:white" for="newTaskName">Task:</label><br>
-                <input type="text" id="newTaskName" name="newTaskName"><br>
+                <input class="form-control" type="text" id="newTaskName" name="newTaskName"><br>
                 <label style="color:white" for="newTaskCategory">Category:</label><br>
-                <select name="newTaskCategory" id="newTaskCategory">
+                <select class="form-control" name="newTaskCategory" id="newTaskCategory">
                 <option value="0" selected>Select A Category</option>
                     {{#each category as |c|}}
                     <option value={{{c.id}}}>{{{c.name}}}</option>
                     {{/each}}
                 </select>
+                
+                <button type="button" class="btn btn-info btn-circle btn-sm" id="addNewCategoryBtn" onclick="toggleNewCategory()">+</button>
+                <br>
+                <div id="addNewCategory" hidden>
+                    <label style="color:white" for="newCategoryInput">Create a New Category:</label><br>
+                    <input type="text" id="newCategoryInput" name="newCategoryInput" placeholder="Ex: Health and Fitness">
+                </div>
                 <br>
                 <label style="color:white" for="newTaskPomodoros">Pomodoros:</label><br>
                 <input type="number" id="newTaskPomodoros" name="newTaskPomodoros"><br>
