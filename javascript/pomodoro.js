@@ -6,6 +6,7 @@ function Queue() {
 
 Queue.prototype.enqueueTask = function( task ) {
   this.elements.push( task );
+  addTaskToTable(task);
 };
 
 Queue.prototype.dequeueTask = function() {
@@ -26,13 +27,35 @@ Queue.prototype.length = function() {
 
 let TaskList = new Queue();
 
+
 function addToQueue(){
-  //Get data from dropdown.selected and add row to table
+  var dropdownselected = document.getElementById("taskSelector").value;
+  let array = dropdownselected.split(',');
+  let taskid = array[0];
+  let categoryid = array[1];
+  let taskTime = array[2];
+  let breakTime = array[3];
   
+  let taskSelector = document.getElementById("taskSelector");
+  taskSelectorOpts = taskSelector.options;
+  let selectedIndex = taskSelector.selectedIndex;
+  let taskName = taskSelectorOpts[selectedIndex].text;
+  console.log(taskName, taskid, categoryid, taskTime, breakTime);
+  //*-->pomodoros is not present at the moment.
+  //*-->category id needs to be turned into category name.
+  let data = {
+    "name"            : taskName,
+    "pomodoros"       : "",
+    "category"        : categoryid,
+    "taskTime"        : taskTime,
+    "breakTime"       : breakTime
+  }
+  TaskList.enqueueTask(data);
 }
 
 function addNewTask() {
   //Save new task to database and update dropdown menu.
+  var taskForm = document.getElementById("newTaskForm");
   let name = document.getElementsByName("newTaskName")[0].value;
   let pomodoros = document.getElementsByName("newTaskPomodoros")[0].value;
   let taskTime = document.getElementsByName("newTaskTime")[0].value;
@@ -83,8 +106,6 @@ function addTaskToTable(newTask) {
   pomodorosCell.innerHTML = newTask.pomodoros;
   taskTimeCell.innerHTML = newTask.taskTime;
   breakTimeCell.innerHTML = newTask.breakTime;
-  var test = taskTable.rows[1].cells[0].textContent;
-  console.log(test);
   
 }
 
@@ -260,6 +281,11 @@ let Clock = {
   //timerDisplay: document.getElementById("timerDisplay"),
   taskTimeString: document.getElementById("taskTimerDisplay"),
   breakTimeString: document.getElementById("breakTimerDisplay"),
+  addTaskBtn: document.getElementById("addNewTask"),
+  addToQueueBtn: document.getElementById("addToQueueBtn"),
+
+
+
   // timer methods
   startClock: function(){
       if (this.state === "task" || this.state === "break"){
@@ -366,6 +392,12 @@ let Clock = {
     this.pauseResumeBtn.addEventListener("click", this.handlePauseResumeClick.bind(this));
     this.startBtn.addEventListener("click", this.handleStartClick.bind(this));
     this.stopBtn.addEventListener("click", this.handleStopClick.bind(this));
+    this.addTaskBtn.addEventListener("click", function() {
+      addNewTask();
+    });
+    this.addToQueueBtn.addEventListener("click", function() {
+      addToQueue();
+    })
     console.log("new state: "+ this.state);
   }
 }
