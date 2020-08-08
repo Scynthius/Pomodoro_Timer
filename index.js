@@ -37,15 +37,7 @@ app.set('port', process.argv[2] || 13227);
 
 app.get('/', function(req,res){
   var context = {};
-  try{
-    context.username = req.user.first_name;
-    context.loginButton = "Account"
-    context.loggedIn = true;
-  } catch(e) {
-    context.username = "Visitor"
-    context.loginButton = "Login"
-    context.loggedIn = false;
-  }
+  initializeUser(req, context);
   queryString = "SELECT * FROM tasks";
   newQueryString = "SELECT * FROM categories";
   getQuery(queryString)
@@ -96,26 +88,34 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 }))
 
 app.get('/login',checkNotAuthenticated, (req, res) => {
+  context = {};
+  initializeUser(req, context);
   users = [];
   queryString = "SELECT * FROM users";
   getQuery(queryString)
   .then((rows) => {
     users.push(rows)
-    res.render('login');
+    res.render('login', context);
   })
   
 });
 
 app.get('/register', checkNotAuthenticated, (req, res) => {
-  res.render('register')
+  context = {};
+  initializeUser(req, context);
+  res.render('register', context);
 })
 
 app.get('/alreadyloggedin', function (req, res) {
-  res.render('alreadyloggedin')
+  context = {};
+  initializeUser(req, context);
+  res.render('alreadyloggedin', context);
 })
 
 app.get('/account', (req, res) => {
-  res.render('account');
+  context = {};
+  initializeUser(req, context);
+  res.render('account', context);
 })
 
 app.post('/register', checkNotAuthenticated, (req, res) => {
@@ -151,6 +151,18 @@ app.use(function(err, req, res, next){
   res.status(500);
   res.render('500');
 });
+
+function initializeUser(req, context) {
+  if (req.isAuthenticated()) {
+      context.username = req.user.first_name;
+      context.loginButton = "Account"
+      context.loggedIn = true;
+  } else {
+    context.username = "Visitor"
+    context.loginButton = "Login"
+    context.loggedIn = false;
+  }
+}
 
 function checkNotAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
