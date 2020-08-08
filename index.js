@@ -118,6 +118,38 @@ app.get('/account', (req, res) => {
   res.render('account', context);
 })
 
+app.get('/updateAccount', (req, res) => {
+  res.render('updateAccount');
+})
+
+
+////NOT WORKING
+//This should update the email and password for the user
+//I tried to copy the function for app.post("/register")
+///and modify it, but I haven't been able to get it to work.
+//I was going to just try to get it to update my own user, but that didnt' even work.
+app.post('/updateAccount', checkNotAuthenticated, (req, res) => {
+  try {
+    bcrypt.hash(req.body.password, 10, function(err, hash){
+      let data = ["serviasd@oregonstate.edu", "newpassword", "David", "Servias"];
+    
+      let queryString = `UPDATE users SET email = 'serviasd@oregonstate.edu' WHERE first_name = 'David' and last_name = 'Servias'`
+      postQuery(queryString, data)
+      .then((result) => {
+        res.sendStatus(200)
+    })
+    })
+    
+  } catch(error) {
+    console.log(error)
+    res.sendStatus(error)
+  }
+})
+/////
+
+
+
+
 app.post('/register', checkNotAuthenticated, (req, res) => {
   try {
     bcrypt.hash(req.body.password, 10, function(err, hash){
