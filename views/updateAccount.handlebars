@@ -1,0 +1,32 @@
+<h1>hello</h1>
+
+
+<div class="text-center form-accounts" id="userRegister">
+    <form class="form-register">
+      <h1 class="h3 mb-3 font-weight-normal">Update Account Details</h1>
+      <label for="regEmail" class="sr-only">Test</label>
+      <input type="email" id="regEmail" name="email" class="form-control" placeholder="Email Address" required autofocus>
+      <label for="regPW" class="sr-only">Password</label>
+      <input type="password" id="regPW" name="password" class="form-control" placeholder="Password" required>
+      <button class="btn btn-lg btn-primary btn-block" type="submit" id="registerButton">Update</button>
+    </form>
+
+     <div class="modal fade" id="validReg" tabindex="-1" role="dialog" aria-labelledby="completedRegistration" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                Registration Complete
+                            </div>
+                            <div class="modal-body">
+                                You will now be redirected to the login page.
+                            </div>
+                            <div class="modal-footer">
+                                <a href="/login">Login</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+      </div>
+
+
+<script src="./javascript/updateAccount.js"></script>
