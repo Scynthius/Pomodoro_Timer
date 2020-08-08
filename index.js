@@ -51,6 +51,7 @@ app.get('/', function(req,res){
   getQuery(queryString)
   .then((rows) => {
     context.task = rows;
+    tasks.push(rows);
   }).then(() => {
     return getQuery(newQueryString);
   }).then((rows) => {
@@ -59,6 +60,34 @@ app.get('/', function(req,res){
   })
 });
 
+app.put('/', (req, res, next) => {
+  var useremail = req.user.email;
+  var user = users[0].find(user => user.email === useremail);
+  var userid = user.id;
+  var status = 200;
+  var queryString = "INSERT INTO tasks (name, task_time, break_time, userid, categoryid) VALUES ((?), (?), (?), (?), (?));";
+  if (req.body.newCategory){
+    var newCatQuery = "INSERT INTO categories (name, userid) VALUES ((?), (?));";
+    var getCatIDQuery = "SELECT MAX(id) FROM categories;";
+    postQuery(newCatQuery, [req.body.category, userid])
+    .then((result) => {
+      status = 200;
+    }).then(() => {
+      return getQuery(getCatIDQuery);
+    }).then((rows) => {
+      let category = rows[0].id;
+    }).then(() => {
+      postQuery(queryString, [req.body.name, req.body.taskTime, req.body.breakTime, userid, category])
+    }).then((result) => {
+      res.sendStatus(200);
+    })
+  } else {
+    postQuery(queryString, [req.body.name, req.body.taskTime, req.body.breakTime, userid, req.body.category])
+    .then((result) => {
+      res.sendStatus(200);
+    })
+  }
+});
 
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
   successRedirect: '/',
@@ -155,14 +184,6 @@ app.use(function(err, req, res, next){
   res.render('500');
 });
 
-function checkAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next()
-  }
-
-  res.redirect('/login')
-}
-
 function checkNotAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return res.redirect('/account')
@@ -194,7 +215,6 @@ function postQuery(query, params) {
     })
   })
 }
-
 
 app.listen(process.env.PORT || app.get('port'), 
 	() => console.log("Server is running on port", app.get('port'), "..."));

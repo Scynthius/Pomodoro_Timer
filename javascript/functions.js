@@ -36,7 +36,6 @@ function togglePause() {
     }
 }
 
-
 function toggleTimerDisplay(taskTimer) {
     timeString = document.getElementById("timerDisplay");
     if(taskTimer) {
@@ -53,3 +52,34 @@ function onSignIn(googleUser) {
     console.log('Image URL: ' + profile.getImageUrl());
     console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
   }
+
+function selectUserButton(req) {
+    //Changes the display text for the button that navigates to the user login/account pages when called.
+    //If user is not logged in, it will display "Log In". When logged in, it will display "Account".
+    try{
+        let username = req.user.first_name;
+        let userButton = document.getElementById("")
+        context.loginButton = "Account"
+        context.loggedIn = true;
+      } catch(e) {
+        context.username = "Visitor"
+        context.loginButton = "Login"
+        context.loggedIn = false;
+      }
+}
+
+function toggleNewCategory() {
+    let categorybtn = document.getElementById("addNewCategoryBtn");
+    let newCatDiv = document.getElementById("addNewCategory");
+    let categoryList = document.getElementById("newTaskCategory");
+    let divState = newCatDiv.hidden;
+    if (divState){
+        newCatDiv.hidden = false;
+        categorybtn.innerText = "-";
+        categoryList.disabled = true;
+    } else {
+        newCatDiv.hidden = true;
+        categorybtn.innerText = "+";
+        categoryList.disabled = false;
+    }
+}
