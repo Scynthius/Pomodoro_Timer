@@ -1,17 +1,22 @@
 function updateAccount() {
-    var email = document.getElementById("regEmail").value;
-    var password = document.getElementById("regPW").value;
+    var email = document.getElementById("updateEmail").value;
+    var password = document.getElementById("updatePW").value;
+    var firstName = document.getElementById("updateFName").value;
+    var lastName = document.getElementById("updateLName").value;
     var data = {
         "email"            : email,
-        "password"         : password
+        "password"         : password,
+        "firstName"        : firstName,
+        "lastName"         : lastName
     }
 
     var request = new XMLHttpRequest();
-    request.open('POST', '/updateAccount', true);
+    request.open('PUT', '/account', true);
     request.setRequestHeader('Content-Type', 'application/json');
     request.addEventListener('load', function () {
         if (request.status >= 200 && request.status < 400) {
-            $('#validReg').modal('show');
+            $('#validUpdate').modal({backdrop: 'static', keyboard: false})  
+            $('#validUpdate').modal('show');
         } else {
             console.log('Error');
         }
