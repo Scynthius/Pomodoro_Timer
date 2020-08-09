@@ -1,9 +1,37 @@
-<section class="text-center">
-    <form class="form-accounts" action="/updateAccount" method="GET">
-        
-        <button class="btn btn-lg btn-danger btn-block" type="submit">Update Account</button>
-    </form>  
-    <form class="form-accounts" action="/logout" method="GET">
-         <button class="btn btn-lg btn-danger btn-block" type="submit">Log Out</button>
-    </form>  
+<section class="text-center form-accounts">    
+    <form class="form-register">
+      <h1 class="h3 mb-3 font-weight-normal">Update Account Details</h1>
+      <label for="updateFName" class="sr-only">First Name</label>
+      <input type="text" id="updateFName" name="fname" class="form-control" value={{{first_name}}} required>
+      <label for="updateLName" class="sr-only">Last Name</label>
+      <input type="text" id="updateLName" name="lname" class="form-control" value={{{last_name}}} required>
+      <label for="updateEmail" class="sr-only">Email</label>
+      <input type="email" id="updateEmail" name="email" class="form-control" value={{{email}}} required>
+      <label for="updatePW" class="sr-only">Password</label>
+      <input type="password" id="updatePW" name="password" class="form-control" placeholder="Password" required>
+      <button class="btn btn-lg btn-primary btn-block" type="submit" id="updateAccountButton">Update</button>
+    </form>
+
+    
+     <div class="modal fade" id="validUpdate" tabindex="-1" role="dialog" aria-labelledby="completedUpdate" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                Updated Account Details
+                            </div>
+                            <div class="modal-body">
+                                Please sign in again to continue.
+                            </div>
+                            <div class="modal-footer">
+                                <a href="/login">Login</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+      </div>
+
+
+    <button class="btn btn-lg btn-danger btn-block" type="submit">Log Out</button>
 </section>
+
+<script src="./javascript/updateAccount.js"></script>

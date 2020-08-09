@@ -52,28 +52,39 @@ function addNewTask() {
   var taskForm = document.getElementById("newTaskForm");
   let name = document.getElementsByName("newTaskName")[0].value;
   let pomodoros = document.getElementsByName("newTaskPomodoros")[0].value;
-  let category = document.getElementById("newTaskCategory").value;
   let taskTime = document.getElementsByName("newTaskTime")[0].value;
   let breakTime = document.getElementsByName("newBreakTime")[0].value;
+  let newCategory = document.getElementById("addNewCategory");
+  if(newCategory.hidden){
+    let category = document.getElementsById("newTaskCategory").value;
+    let newCategory = false;
+  } else {
+    let category = document.getElementsById("newCategoryInput").value;
+    let newCategory = true;
+  }
   var data = {
     "name"              : name,
     "pomodoros"         : pomodoros,
     "category"          : category,
     "taskTime"          : taskTime,
-    "breakTime"         : breakTime
-  }
+    "breakTime"         : breakTime,
+    "newCategory"       : newCategory
+  };
+
   var request = new XMLHttpRequest();
   request.open('PUT', '/', true);
   request.setRequestHeader('Content-Type', 'application/json');
   request.addEventListener('load', function () {
       if (request.status >= 200 && request.status < 400) {
-          taskForm.reset();
+          $('#newTaskForm').reset();
+          let newTask = {name: name, pomodoros: pomodoros, category: category, taskTime: taskTime, breakTime: breakTime};
+          TaskList.enqueueTask(newTask);
+          addTaskToTable(newTask);
       } else {
           console.log('Error');
       }
   });
   request.send(JSON.stringify(data));
-  TaskList.enqueueTask(data);
 }
 function addTaskToTable(newTask) {
   //Insert task into HTML table
@@ -371,5 +382,6 @@ let Clock = {
     }
   }
 }
+
 
 Clock.start();

@@ -67,3 +67,19 @@ function selectUserButton(req) {
         context.loggedIn = false;
       }
 }
+
+function toggleNewCategory() {
+    let categorybtn = document.getElementById("addNewCategoryBtn");
+    let newCatDiv = document.getElementById("addNewCategory");
+    let categoryList = document.getElementById("newTaskCategory");
+    let divState = newCatDiv.hidden;
+    if (divState){
+        newCatDiv.hidden = false;
+        categorybtn.innerText = "-";
+        categoryList.disabled = true;
+    } else {
+        newCatDiv.hidden = true;
+        categorybtn.innerText = "+";
+        categoryList.disabled = false;
+    }
+}

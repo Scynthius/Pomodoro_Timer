@@ -37,20 +37,13 @@ app.set('port', process.argv[2] || 13227);
 
 app.get('/', function(req,res){
   var context = {};
-  try{
-    context.username = req.user.first_name;
-    context.loginButton = "Account"
-    context.loggedIn = true;
-  } catch(e) {
-    context.username = "Visitor"
-    context.loginButton = "Login"
-    context.loggedIn = false;
-  }
+  initializeUser(req, context);
   queryString = "SELECT * FROM tasks";
   newQueryString = "SELECT * FROM categories";
   getQuery(queryString)
   .then((rows) => {
     context.task = rows;
+    tasks.push(rows);
   }).then(() => {
     return getQuery(newQueryString);
   }).then((rows) => {
@@ -59,16 +52,34 @@ app.get('/', function(req,res){
   })
 });
 
-app.put('/', (req, res) => {
+app.put('/', (req, res, next) => {
   var useremail = req.user.email;
   var user = users[0].find(user => user.email === useremail);
-  var userid = user.id
+  var userid = user.id;
+  var status = 200;
   var queryString = "INSERT INTO tasks (name, task_time, break_time, userid, categoryid) VALUES ((?), (?), (?), (?), (?));";
-  postQuery(queryString, [req.body.name, req.body.taskTime, req.body.breakTime, userid, req.body.category])
-  .then((result) => {
-    res.sendStatus(200);
-  })
-})
+  if (req.body.newCategory){
+    var newCatQuery = "INSERT INTO categories (name, userid) VALUES ((?), (?));";
+    var getCatIDQuery = "SELECT MAX(id) FROM categories;";
+    postQuery(newCatQuery, [req.body.category, userid])
+    .then((result) => {
+      status = 200;
+    }).then(() => {
+      return getQuery(getCatIDQuery);
+    }).then((rows) => {
+      let category = rows[0].id;
+    }).then(() => {
+      postQuery(queryString, [req.body.name, req.body.taskTime, req.body.breakTime, userid, category])
+    }).then((result) => {
+      res.sendStatus(200);
+    })
+  } else {
+    postQuery(queryString, [req.body.name, req.body.taskTime, req.body.breakTime, userid, req.body.category])
+    .then((result) => {
+      res.sendStatus(200);
+    })
+  }
+});
 
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
   successRedirect: '/',
@@ -77,27 +88,78 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 }))
 
 app.get('/login',checkNotAuthenticated, (req, res) => {
+  context = {};
+  initializeUser(req, context);
   users = [];
   queryString = "SELECT * FROM users";
   getQuery(queryString)
   .then((rows) => {
     users.push(rows)
-    res.render('login');
+    res.render('login', context);
   })
   
 });
 
 app.get('/register', checkNotAuthenticated, (req, res) => {
-  res.render('register')
+  context = {};
+  initializeUser(req, context);
+  res.render('register', context);
 })
 
 app.get('/alreadyloggedin', function (req, res) {
-  res.render('alreadyloggedin')
+  context = {};
+  initializeUser(req, context);
+  res.render('alreadyloggedin', context);
 })
 
 app.get('/account', (req, res) => {
-  res.render('account');
+  context = {};
+  context.first_name = req.user.first_name;
+  context.last_name = req.user.last_name;
+  context.email = req.user.email;
+  initializeUser(req, context);
+  res.render('account', context);
 })
+
+
+////NOT WORKING
+//This should update the email and password for the user
+//I tried to copy the function for app.post("/register")
+///and modify it, but I haven't been able to get it to work.
+//I was going to just try to get it to update my own user, but that didnt' even work.
+app.put('/account', (req, res) => {
+  if (req.body.password){
+    bcrypt.hash(req.body.password, 10, function(err, hash){
+      let data = [req.body.email, hash, req.body.firstName, req.body.lastName, req.user.id];
+    
+      let queryString = `UPDATE users SET email = (?), password = (?), first_name = (?), last_name = (?) WHERE id = (?)`
+      postQuery(queryString, data)
+      .then((result) => {
+        req.logOut();
+        res.sendStatus(200);
+    })
+    })
+  } else {
+    let data = [req.body.email, req.body.firstName, req.body.lastName, req.user.id];
+    let queryString = `UPDATE users SET email = (?), first_name = (?), last_name = (?) WHERE id = (?)`
+    postQuery(queryString, data)
+    .then((result) => {
+      req.logOut();
+      res.sendStatus(200);
+    })
+  }
+  try {
+   
+    
+  } catch(error) {
+    console.log(error)
+    res.sendStatus(error)
+  }
+})
+/////
+
+
+
 
 app.post('/register', checkNotAuthenticated, (req, res) => {
   try {
@@ -132,6 +194,18 @@ app.use(function(err, req, res, next){
   res.status(500);
   res.render('500');
 });
+
+function initializeUser(req, context) {
+  if (req.isAuthenticated()) {
+      context.username = req.user.first_name;
+      context.loginButton = "Account"
+      context.loggedIn = true;
+  } else {
+    context.username = "Visitor"
+    context.loginButton = "Login"
+    context.loggedIn = false;
+  }
+}
 
 function checkNotAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
