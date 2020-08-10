@@ -20,7 +20,7 @@ Queue.prototype.length = function() {
   return this.elements.length;
 };
 
-let TaskList = new Queue();
+let TaskQueue = new Queue();
 
 //Queue and Task List functions
 function addToQueue(){
@@ -30,7 +30,7 @@ function addToQueue(){
   let categoryid = array[1];
   let taskTime = array[2];
   let breakTime = array[3];
-  
+
   let taskSelector = document.getElementById("taskSelector");
   taskSelectorOpts = taskSelector.options;
   let selectedIndex = taskSelector.selectedIndex;
@@ -45,9 +45,10 @@ function addToQueue(){
     "taskTime"        : taskTime,
     "breakTime"       : breakTime
   }
-  TaskList.enqueueTask(data);
+  TaskQueue.enqueueTask(data);
 }
-function addNewTask() {
+
+function getNewTaskData() {
   //Save new task to database and update dropdown menu.
   var taskForm = document.getElementById("newTaskForm");
   let name = document.getElementsByName("newTaskName")[0].value;
@@ -71,6 +72,12 @@ function addNewTask() {
     "newCategory"       : newCategory
   };
 
+  return data;
+}
+
+function addNewTask() {
+  var data = getNewTaskData();
+
   var request = new XMLHttpRequest();
   request.open('PUT', '/', true);
   request.setRequestHeader('Content-Type', 'application/json');
@@ -78,7 +85,7 @@ function addNewTask() {
       if (request.status >= 200 && request.status < 400) {
           $('#newTaskForm').reset();
           let newTask = {name: name, pomodoros: pomodoros, category: category, taskTime: taskTime, breakTime: breakTime};
-          TaskList.enqueueTask(newTask);
+          TaskQueue.enqueueTask(newTask);
           addTaskToTable(newTask);
       } else {
           console.log('Error');
@@ -88,8 +95,9 @@ function addNewTask() {
 }
 function addTaskToTable(newTask) {
   //Insert task into HTML table
-  var taskTable = document.getElementById("taskList");
-  var newRow = taskTable.insertRow(TaskList.length());
+  var taskTable = document.getElementById("TaskQueue");
+  var newRow = taskTable.insertRow(TaskQueue.length());
+
   var nameCell = newRow.insertCell(0);
   var categoryCell = newRow.insertCell(1);
   var pomodorosCell = newRow.insertCell(2);
@@ -102,15 +110,15 @@ function addTaskToTable(newTask) {
   breakTimeCell.innerHTML = newTask.breakTime;
 }
 function removeTaskFromTable() {
-  document.getElementById("taskList").deleteRow(1);
+  document.getElementById("TaskQueue").deleteRow(1);
 }
 function decreaseTaskPomodoros() {
-  if (!TaskList.isEmpty()) {
-    TaskList.peek().pomodoros--;
-    if (TaskList.peek().pomodoros == 0) {
+  if (!TaskQueue.isEmpty()) {
+    TaskQueue.peek().pomodoros--;
+    if (TaskQueue.peek().pomodoros == 0) {
       removeTaskFromTable();
     } else {
-      document.getElementById("taskList").rows[1].cells[2].innerHTML = TaskList.peek().pomodoros;
+      document.getElementById("TaskQueue").rows[1].cells[2].innerHTML = TaskQueue.peek().pomodoros;
     }
   }
 }
