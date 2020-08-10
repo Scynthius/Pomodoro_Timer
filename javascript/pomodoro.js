@@ -1,4 +1,4 @@
-
+TaskQueue
 
 function Queue() {
   this.elements = [];
@@ -25,7 +25,7 @@ Queue.prototype.length = function() {
   return this.elements.length;
 };
 
-let TaskList = new Queue();
+let TaskQueue = new Queue();
 
 
 function addToQueue(){
@@ -35,7 +35,7 @@ function addToQueue(){
   let categoryid = array[1];
   let taskTime = array[2];
   let breakTime = array[3];
-  
+
   let taskSelector = document.getElementById("taskSelector");
   taskSelectorOpts = taskSelector.options;
   let selectedIndex = taskSelector.selectedIndex;
@@ -50,7 +50,7 @@ function addToQueue(){
     "taskTime"        : taskTime,
     "breakTime"       : breakTime
   }
-  TaskList.enqueueTask(data);
+  TaskQueue.enqueueTask(data);
 }
 
 function addNewTask() {
@@ -84,7 +84,7 @@ function addNewTask() {
       if (request.status >= 200 && request.status < 400) {
           $('#newTaskForm').reset();
           let newTask = {name: name, pomodoros: pomodoros, category: category, taskTime: taskTime, breakTime: breakTime};
-          TaskList.enqueueTask(newTask);
+          TaskQueue.enqueueTask(newTask);
           addTaskToTable(newTask);
       } else {
           console.log('Error');
@@ -94,8 +94,8 @@ function addNewTask() {
 }
 
 function addTaskToTable(newTask) {
-  var taskTable = document.getElementById("taskList");
-  var newRow = taskTable.insertRow(TaskList.length());
+  var taskTable = document.getElementById("TaskQueue");
+  var newRow = taskTable.insertRow(TaskQueue.length());
   var nameCell = newRow.insertCell(0);
   var categoryCell = newRow.insertCell(1);
   var pomodorosCell = newRow.insertCell(2);
@@ -106,20 +106,20 @@ function addTaskToTable(newTask) {
   pomodorosCell.innerHTML = newTask.pomodoros;
   taskTimeCell.innerHTML = newTask.taskTime;
   breakTimeCell.innerHTML = newTask.breakTime;
-  
+
 }
 
 function removeTaskFromTable() {
-  document.getElementById("taskList").deleteRow(1);
+  document.getElementById("TaskQueue").deleteRow(1);
 }
 
 function decreaseTaskPomodoros() {
-  if (!TaskList.isEmpty()) {
-    TaskList.peek().pomodoros--;
-    if (TaskList.peek().pomodoros == 0) {
+  if (!TaskQueue.isEmpty()) {
+    TaskQueue.peek().pomodoros--;
+    if (TaskQueue.peek().pomodoros == 0) {
       removeTaskFromTable();
     } else {
-      document.getElementById("taskList").rows[1].cells[2].innerHTML = TaskList.peek().pomodoros;
+      document.getElementById("TaskQueue").rows[1].cells[2].innerHTML = TaskQueue.peek().pomodoros;
     }
   }
 }
@@ -177,7 +177,7 @@ let Clock = {
       this.taskTimeLeft = [parseInt(taskParts[0], 10), 0];
       this.breakTimeLeft = [parseInt(breakParts[0], 10), 0];
       //Grab task table element
-      var taskTable = document.getElementById("taskList");
+      var taskTable = document.getElementById("TaskQueue");
       //If a task is in the task list, set proper timer value:
       if (taskTable.rows[1].cells[3].textContent != "" && taskTable.rows[1].cells[4].textContent != "") {
         console.log("Grabbing from table...");
@@ -246,7 +246,7 @@ let Clock = {
   },
   soundOn:true,
   restoreTimers: function(){
-    var taskTable = document.getElementById("taskList");
+    var taskTable = document.getElementById("TaskQueue");
     if (taskTable.rows[1].cells[3].textContent != "" && taskTable.rows[1].cells[4].textContent != "") {
       console.log("Grabbing from table...");
       //Get value of task time
