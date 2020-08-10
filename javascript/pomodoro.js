@@ -51,7 +51,7 @@ function addToQueue(){
   TaskQueue.enqueueTask(data);
 }
 
-function addNewTask() {
+function getNewTaskData() {
   //Save new task to database and update dropdown menu.
   var taskForm = document.getElementById("newTaskForm");
   let name = document.getElementsByName("newTaskName")[0].value;
@@ -74,6 +74,12 @@ function addNewTask() {
     "breakTime"         : breakTime,
     "newCategory"       : newCategory
   };
+
+  return data;
+}
+
+function addNewTask() {
+  var data = getNewTaskData();
 
   var request = new XMLHttpRequest();
   request.open('PUT', '/', true);
