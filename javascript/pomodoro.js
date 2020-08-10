@@ -1,5 +1,3 @@
-TaskQueue
-
 function Queue() {
   this.elements = [];
 }
