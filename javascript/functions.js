@@ -83,3 +83,39 @@ function toggleNewCategory() {
         categoryList.disabled = false;
     }
 }
+
+function loadProgress() {
+    var request = new XMLHttpRequest();
+    request.open('GET', '/progress', true);
+    request.setRequestHeader('Content-Type', 'application/json');
+    request.addEventListener('load', function () {
+        if (request.status >= 200 && request.status < 400) {
+            //?
+        }
+        else {
+            console.log("Error!");
+        }
+    });
+    request.send();
+}
+
+function sendProgress(data) {
+    //task name, categoryid, email needed in req.body
+    taskname = data.taskname;
+    categoryid = data.categoryid;
+    var send = {
+        taskname: taskname,
+        categoryid: categoryid
+    }
+    var request = new XMLHttpRequest();
+    request.open('PUT', '/progress', true);
+    request.setRequestHeader('Content-Type', 'application/json');
+    request.addEventListener('load', function () {
+        if (request.status >= 200 && request.status < 400) {
+            //?
+        } else {
+            console.log('Error');
+        }
+    });
+    request.send(JSON.stringify(send));
+}
