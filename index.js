@@ -163,8 +163,8 @@ app.get('/completed', (req, res, next) => {
       console.log("badges: ", badges);
       console.log("sameTaskQty: ", sameTaskQty);
       console.log("taskQty: ", taskQty);
-      var giveBadge = true;
       badges.forEach(element => {
+        var giveBadge = true;
         console.log(element.id);
         user_badges.forEach(userBadge => {
           if (element.id == userBadge.badgeid) {
