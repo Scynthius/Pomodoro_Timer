@@ -45,13 +45,13 @@ function toggleTimerDisplay(taskTimer) {
     }
 }
 
-function onSignIn(googleUser) {
-    var profile = googleUser.getBasicProfile();
-    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-    console.log('Name: ' + profile.getName());
-    console.log('Image URL: ' + profile.getImageUrl());
-    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-  }
+// function onSignIn(googleUser) {
+//     var profile = googleUser.getBasicProfile();
+//     console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+//     console.log('Name: ' + profile.getName());
+//     console.log('Image URL: ' + profile.getImageUrl());
+//     console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+//   }
 
 function selectUserButton(req) {
     //Changes the display text for the button that navigates to the user login/account pages when called.
@@ -82,4 +82,40 @@ function toggleNewCategory() {
         categorybtn.innerText = "+";
         categoryList.disabled = false;
     }
+}
+
+function loadProgress() {
+    var request = new XMLHttpRequest();
+    request.open('GET', '/progress', true);
+    request.setRequestHeader('Content-Type', 'application/json');
+    request.addEventListener('load', function () {
+        if (request.status >= 200 && request.status < 400) {
+            //?
+        }
+        else {
+            console.log("Error!");
+        }
+    });
+    request.send();
+}
+
+function sendProgress(data) {
+    //task name, categoryid, email needed in req.body
+    taskname = data.taskname;
+    categoryid = data.categoryid;
+    var send = {
+        taskname: taskname,
+        categoryid: categoryid
+    }
+    var request = new XMLHttpRequest();
+    request.open('PUT', '/progress', true);
+    request.setRequestHeader('Content-Type', 'application/json');
+    request.addEventListener('load', function () {
+        if (request.status >= 200 && request.status < 400) {
+            //?
+        } else {
+            console.log('Error');
+        }
+    });
+    request.send(JSON.stringify(send));
 }
