@@ -123,6 +123,31 @@ function decreaseTaskPomodoros() {
   }
 }
 
+function saveCompletedTask() {
+  
+    let name = TaskQueue.peek().name;
+    let category = TaskQueue.peek().category;
+    let taskTime = TaskQueue.peek().taskTime;
+    let breakTime = TaskQueue.peek().breakTime;
+    var data = {
+      "name"              : name,
+      "category"          : category,
+      "taskTime"          : taskTime,
+      "breakTime"         : breakTime
+    };
+    var request = new XMLHttpRequest();
+    request.open('PUT', '/completed', true);
+    request.setRequestHeader('Content-Type', 'application/json');
+    request.addEventListener('load', function () {
+        if (request.status >= 200 && request.status < 400) {
+            console.log("Stored user performance data.");
+        } else {
+            console.log('Error');
+        }
+    });
+    request.send(JSON.stringify(data));
+}
+
 // Clock class
 let Clock = {
   //  Class Vars
@@ -239,6 +264,9 @@ let Clock = {
   decrementTask: function(){
     //if timer reaches zero, restore the timers and toggle the state
     if (this.taskTimeLeft[0] === 0 && this.taskTimeLeft[1] === 0) {
+      if (!TaskQueue.isEmpty()) {
+        saveCompletedTask();
+      }
       decreaseTaskPomodoros();
       this.restoreTimers();
       this.state = "break";

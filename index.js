@@ -69,7 +69,7 @@ app.put('/', (req, res, next) => {
     }).then((rows) => {
       let category = rows[0].id;
     }).then(() => {
-      postQuery(queryString, [req.body.name, req.body.taskTime, req.body.breakTime, userid, category])
+      return postQuery(queryString, [req.body.name, req.body.taskTime, req.body.breakTime, userid, category])
     }).then((result) => {
       res.sendStatus(200);
     })
@@ -79,6 +79,26 @@ app.put('/', (req, res, next) => {
       res.sendStatus(200);
     })
   }
+});
+
+app.put('/completed', (req, res, next) => {
+  if (!req.isAuthenticated()) {
+    res.sendStatus(200);
+  }
+  var useremail = req.user.email;
+  var user = users[0].find(user => user.email === useremail);
+  var userid = user.id;
+  var status = 200;
+  var queryString = "INSERT INTO performance (task, userid, sessionid, categoryid) VALUES ((?), (?), (?), (?));";
+  var getCatIDQuery = "SELECT id FROM categories WHERE name=(?);";
+  getQuery(getCatIDQuery);
+  }).then((rows) => {
+    let category = rows[0].id;
+  }).then(() => {
+    return postQuery(queryString, [req.body.name, userid, req.sessionID, category])
+  }).then((result) => {
+    res.sendStatus(200);
+  })
 });
 
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
