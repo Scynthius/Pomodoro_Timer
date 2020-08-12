@@ -56,12 +56,14 @@ app.get('/progress', function(req, res) {
   var context = {};
   initializeUser(req, context);
   console.log(req.user);
-  queryString = "SELECT * FROM performance";
+  queryString = "SELECT * FROM performance WHERE userid="+req.user.id;
+  badgeQueryString = 
   getQuery(queryString)
   .then((rows) => {
-    //Correct data is retrieved but page is not rendering atm.
     context.performance = rows;
-    console.log(context.performance);
+  }).then((){
+
+  })
     res.render('progress', context);
   })
 });
@@ -156,12 +158,6 @@ app.get('/account', (req, res) => {
   res.render('account', context);
 })
 
-
-////NOT WORKING
-//This should update the email and password for the user
-//I tried to copy the function for app.post("/register")
-///and modify it, but I haven't been able to get it to work.
-//I was going to just try to get it to update my own user, but that didnt' even work.
 app.put('/account', (req, res) => {
   if (req.body.password){
     bcrypt.hash(req.body.password, 10, function(err, hash){
@@ -183,17 +179,7 @@ app.put('/account', (req, res) => {
       res.sendStatus(200);
     })
   }
-  try {
-   
-    
-  } catch(error) {
-    console.log(error)
-    res.sendStatus(error)
-  }
 })
-/////
-
-
 
 app.post('/register', checkNotAuthenticated, (req, res) => {
   try {

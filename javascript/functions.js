@@ -104,3 +104,4 @@ function sendProgress(data) {
     });
     request.send(JSON.stringify(send));
 }
+
