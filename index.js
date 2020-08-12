@@ -38,7 +38,7 @@ app.set('port', process.argv[2] || 13227);
 app.get('/', function(req,res){
   var context = {};
   initializeUser(req, context);
-  queryString = "SELECT * FROM tasks";
+  queryString = "SELECT tasks.id, tasks.name, tasks.task_time, tasks.break_time, categories.name AS catname FROM tasks JOIN categories ON tasks.categoryid = categories.id"
   newQueryString = "SELECT * FROM categories";
   getQuery(queryString)
   .then((rows) => {
@@ -52,6 +52,20 @@ app.get('/', function(req,res){
   })
 });
 
+app.get('/progress', function(req, res) {
+  var context = {};
+  initializeUser(req, context);
+  console.log(req.user);
+  queryString = "SELECT * FROM performance";
+  getQuery(queryString)
+  .then((rows) => {
+    //Correct data is retrieved but page is not rendering atm.
+    context.performance = rows;
+    console.log(context.performance);
+    res.render('progress', context);
+  })
+});
+
 app.put('/', (req, res, next) => {
   var useremail = req.user.email;
   var user = users[0].find(user => user.email === useremail);
@@ -59,6 +73,7 @@ app.put('/', (req, res, next) => {
   var status = 200;
   var queryString = "INSERT INTO tasks (name, task_time, break_time, userid, categoryid) VALUES ((?), (?), (?), (?), (?));";
   if (req.body.newCategory){
+    console.log("New category detected.");
     var newCatQuery = "INSERT INTO categories (name, userid) VALUES ((?), (?));";
     var getCatIDQuery = "SELECT MAX(id) FROM categories;";
     postQuery(newCatQuery, [req.body.category, userid])
@@ -74,6 +89,7 @@ app.put('/', (req, res, next) => {
       res.sendStatus(200);
     })
   } else {
+    console.log("Using old category.");
     postQuery(queryString, [req.body.name, req.body.taskTime, req.body.breakTime, userid, req.body.category])
     .then((result) => {
       res.sendStatus(200);
@@ -88,14 +104,14 @@ app.put('/completed', (req, res, next) => {
   var useremail = req.user.email;
   var user = users[0].find(user => user.email === useremail);
   var userid = user.id;
-  var status = 200;
-  var queryString = "INSERT INTO performance (task, userid, sessionid, categoryid) VALUES ((?), (?), (?), (?));";
+  var category;
+  var queryString = "INSERT INTO performance (task, userid, sessionid, categoryid, task_time, break_time) VALUES ((?), (?), (?), (?), (?), (?));";
   var getCatIDQuery = "SELECT id FROM categories WHERE name=(?);";
-  getQuery(getCatIDQuery);
-  }).then((rows) => {
-    let category = rows[0].id;
+  getQuery(getCatIDQuery)
+  .then((rows) => {
+    category = rows[0].id;
   }).then(() => {
-    return postQuery(queryString, [req.body.name, userid, req.sessionID, category])
+    return postQuery(queryString, [req.body.name, userid, req.sessionID, category, req.body.taskTime, req.body.breakTime]);
   }).then((result) => {
     res.sendStatus(200);
   })
@@ -117,7 +133,6 @@ app.get('/login',checkNotAuthenticated, (req, res) => {
     users.push(rows)
     res.render('login', context);
   })
-  
 });
 
 app.get('/register', checkNotAuthenticated, (req, res) => {
@@ -177,7 +192,6 @@ app.put('/account', (req, res) => {
   }
 })
 /////
-
 
 
 

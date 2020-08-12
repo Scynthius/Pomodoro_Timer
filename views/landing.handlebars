@@ -96,7 +96,7 @@
                          <select id="taskSelector" class="form-control">
                             <option value="0" selected>Select A Task</option>
                             {{#each task as |t|}}
-                            <option value={{{t.id}}},{{{t.categoryid}}},{{{t.task_time}}},{{{t.break_time}}}>{{{t.name}}}</option>
+                            <option value={{{t.id}}},{{{t.catname}}},{{{t.task_time}}},{{{t.break_time}}}>{{{t.name}}}</option>
                             {{/each}}
                         </select>
                     </div>
@@ -117,13 +117,7 @@
                 <th style="padding: 0 5px 0 5px">Task Time</th>
                 <th style="padding: 0 5px 0 5px">Break Time</th>
                 </tr>
-                <tr style="height:22px">
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                </tr>
+                
             </table><br>
         </div>
     </section>
