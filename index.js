@@ -117,6 +117,85 @@ app.put('/completed', (req, res, next) => {
   })
 });
 
+app.get('/completed', (req, res, next) => {
+  if (!req.isAuthenticated()) {
+    res.sendStatus(200);
+  }
+  else {
+    var useremail = req.user.email;
+    var user = users[0].find(user => user.email === useremail);
+    var userid = user.id;
+    console.log("user id:", userid);
+    var taskQty;
+    var sameTaskQty;
+    var performance;
+    var user_badges;
+    var badges;
+    queryString = "SELECT COUNT(task) AS taskqty FROM performance WHERE userid=(?)";
+    query0String = "SELECT userid, sessionid, task_time, break_time FROM performance WHERE userid=(?)";
+    query2String = "SELECT * FROM user_earned_badges WHERE userid=(?)";
+    query3String = "SELECT * FROM badges";
+    query4String = "SELECT COUNT(task) AS sameTaskQty, sessionid, userid FROM performance WHERE userid=(?) GROUP BY sessionid";
+    getQuery(queryString, userid)
+    .then((rows) => {
+      taskQty = rows;
+    }).then(() => {
+      return getQuery(query0String, userid);
+    }).then((rows) => {
+      performance = rows;
+    }).then(() => {
+      return getQuery(query2String, userid);
+    }).then((rows) => {
+      user_badges = rows;
+    }).then(() => {
+      return getQuery(query3String);
+    }).then((rows) => {
+      badges = rows;
+    }).then(() => {
+      return getQuery(query4String, userid);
+    }).then((rows) => {
+      sameTaskQty = rows;
+    }).then(() => {
+      console.log("performance: ", performance);
+      console.log("user_badges: ", user_badges);
+      console.log("badges: ", badges);
+      console.log("sameTaskQty: ", sameTaskQty);
+      console.log("taskQty: ", taskQty);
+      var giveBadge = true;
+      badges.forEach(element => {
+        console.log(element.id);
+        user_badges.forEach(userBadge => {
+          if (element.id == userBadge.badgeid) {
+            console.log("User already has this badge.");
+            giveBadge = false;
+          }
+        })
+        if (element.taskqty <= taskQty.taskqty && element.samesession == 0 && giveBadge == true) {
+          //add badge to user
+          queryString = "INSERT INTO user_earned_badges (userid, badgeid) VALUES ((?), (?))";
+          postQuery(queryString, userid, element.id)
+          .then((result) => {
+            console.log("Badge id ", element.id, "given to user", userid);
+          })
+        }
+        else if (element.samesession == 1 && giveBadge == true) {
+          sameTaskQty.forEach(sameQty => {
+            if (element.taskqty <= sameQty.sameTaskQty) {
+              queryString = "INSERT INTO user_earned_badges (userid, badgeid) VALUES ((?), (?))";
+              postQuery(queryString, userid, element.id)
+              .then((result) => {
+                console.log("Badge id ", element.id, "given to user", userid);
+              })
+            }
+          })
+        }
+      });
+      res.sendStatus(200);
+    })
+    
+  }
+})
+
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
   successRedirect: '/',
   failureRedirect: '/login',
@@ -248,10 +327,10 @@ function checkNotAuthenticated(req, res, next) {
   next()
 }
 
-function getQuery(query) {
+function getQuery(query, params) {
   //Takes a SQL statement as an argument and returns a promise which will provide the resulting SQL data array.
   return new Promise((resolve, reject) => {
-    mysql.pool.query(query, function (err, rows, fields) {
+    mysql.pool.query(query, params, function (err, rows, fields) {
       if (err) {
         return reject(err);
       }
