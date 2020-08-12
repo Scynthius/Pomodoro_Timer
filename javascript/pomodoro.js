@@ -99,6 +99,7 @@ function addNewTask() {
   });
   request.send(JSON.stringify(data));
 }
+
 function addTaskToTable(newTask) {
   //Insert task into HTML table
   var taskTable = document.getElementById("TaskQueue");
@@ -116,6 +117,7 @@ function addTaskToTable(newTask) {
   taskTimeCell.innerHTML = newTask.taskTime;
   breakTimeCell.innerHTML = newTask.breakTime;
 }
+
 function removeTaskFromTable() {
   document.getElementById("TaskQueue").deleteRow(1);
 }
