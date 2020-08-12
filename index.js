@@ -57,13 +57,14 @@ app.get('/progress', function(req, res) {
   initializeUser(req, context);
   console.log(req.user);
   queryString = "SELECT * FROM performance WHERE userid="+req.user.id;
-  badgeQueryString = 
+  badgeQueryString = "SELECT * FROM badges";
   getQuery(queryString)
   .then((rows) => {
     context.performance = rows;
-  }).then((){
-
-  })
+  }).then(() =>{
+    return getQuery(badgeQueryString)
+  }).then((rows) =>{
+    context.badges = rows;
     res.render('progress', context);
   })
 });
@@ -164,7 +165,7 @@ app.get('/completed', (req, res, next) => {
       console.log("sameTaskQty: ", sameTaskQty);
       console.log("taskQty: ", taskQty);
       badges.forEach(element => {
-        var giveBadge = true;
+        giveBadge = true;
         console.log(element.id);
         user_badges.forEach(userBadge => {
           if (element.id == userBadge.badgeid) {
@@ -172,10 +173,10 @@ app.get('/completed', (req, res, next) => {
             giveBadge = false;
           }
         })
-        if (element.taskqty <= taskQty.taskqty && element.samesession == 0 && giveBadge == true) {
+        if (element.taskqty <= taskQty[0].taskqty && element.samesession == 0 && giveBadge == true) {
           //add badge to user
           queryString = "INSERT INTO user_earned_badges (userid, badgeid) VALUES ((?), (?))";
-          postQuery(queryString, userid, element.id)
+          postQuery(queryString, [userid, element.id])
           .then((result) => {
             console.log("Badge id ", element.id, "given to user", userid);
           })
@@ -184,7 +185,7 @@ app.get('/completed', (req, res, next) => {
           sameTaskQty.forEach(sameQty => {
             if (element.taskqty <= sameQty.sameTaskQty) {
               queryString = "INSERT INTO user_earned_badges (userid, badgeid) VALUES ((?), (?))";
-              postQuery(queryString, userid, element.id)
+              postQuery(queryString, [userid, element.id])
               .then((result) => {
                 console.log("Badge id ", element.id, "given to user", userid);
               })
