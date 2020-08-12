@@ -265,7 +265,6 @@ let Clock = {
       if (!TaskQueue.isEmpty()) {
         saveCompletedTask();
       }
-      decreaseTaskPomodoros();
       this.restoreTimers();
       this.state = "break";
       console.log("new state : "+ this.state)

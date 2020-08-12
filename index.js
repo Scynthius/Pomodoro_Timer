@@ -36,20 +36,41 @@ app.set('port', process.argv[2] || 13227);
 
 
 app.get('/', function(req,res){
-  var context = {};
-  initializeUser(req, context);
-  queryString = "SELECT tasks.id, tasks.name, tasks.task_time, tasks.break_time, categories.name AS catname FROM tasks JOIN categories ON tasks.categoryid = categories.id"
-  newQueryString = "SELECT * FROM categories";
-  getQuery(queryString)
-  .then((rows) => {
-    context.task = rows;
-    tasks.push(rows);
-  }).then(() => {
-    return getQuery(newQueryString);
-  }).then((rows) => {
-    context.category = rows;
-    res.render('landing', context);
-  })
+  if(!req.isAuthenticated()) {
+    var context = {};
+    context.username = "Visitor";
+    queryString = "SELECT tasks.id, tasks.name, tasks.task_time, tasks.break_time, tasks.userid, categories.name AS catname FROM tasks JOIN categories ON tasks.categoryid = categories.id";
+    newQueryString = "SELECT * FROM categories";
+    getQuery(queryString, userid)
+    .then((rows) => {
+      context.task = rows;
+      tasks.push(rows);
+    }).then(() => {
+      return getQuery(newQueryString);
+    }).then((rows) => {
+      context.category = rows;
+      res.render('landing', context);
+    })
+  }
+  else {
+    var context = {};
+    initializeUser(req, context);
+    var useremail = req.user.email;
+    var user = users[0].find(user => user.email === useremail);
+    var userid = user.id;
+    queryString = "SELECT tasks.id, tasks.name, tasks.task_time, tasks.break_time, tasks.userid, categories.name AS catname FROM tasks JOIN categories ON tasks.categoryid = categories.id WHERE tasks.userid=(?)";
+    newQueryString = "SELECT * FROM categories";
+    getQuery(queryString, userid)
+    .then((rows) => {
+      context.task = rows;
+      tasks.push(rows);
+    }).then(() => {
+      return getQuery(newQueryString);
+    }).then((rows) => {
+      context.category = rows;
+      res.render('landing', context);
+    })
+  }
 });
 
 app.get('/progress', function(req, res) {
@@ -195,7 +216,6 @@ app.get('/completed', (req, res, next) => {
       });
       res.sendStatus(200);
     })
-    
   }
 })
 
