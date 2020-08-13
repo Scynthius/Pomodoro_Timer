@@ -36,11 +36,8 @@ function addToQueue(){
   let selectedIndex = taskSelector.selectedIndex;
   let taskName = taskSelectorOpts[selectedIndex].text;
   console.log(taskName, taskid, categoryid, taskTime, breakTime);
-  //*-->pomodoros is not present at the moment.
-  //*-->category id needs to be turned into category name.
   let data = {
     "name"            : taskName,
-    "pomodoros"       : 1,
     "category"        : categoryid,
     "taskTime"        : taskTime,
     "breakTime"       : breakTime
@@ -53,8 +50,6 @@ function getNewTaskData() {
   
   var category;
   let name = document.getElementsByName("newTaskName")[0].value;
-  var pomodoros = document.getElementById("newTaskPomodoros").value;
-  console.log(pomodoros);
   let taskTime = document.getElementsByName("newTaskTime")[0].value;
   let breakTime = document.getElementsByName("newBreakTime")[0].value;
   let newCategoryDrop = document.getElementById("addNewCategory");
@@ -71,7 +66,6 @@ function getNewTaskData() {
   }
   var data = {
     "name"              : name,
-    "pomodoros"         : pomodoros,
     "category"          : category,
     "taskTime"          : taskTime,
     "breakTime"         : breakTime,
@@ -91,7 +85,7 @@ function addNewTask() {
   request.addEventListener('load', function () {
       if (request.status >= 200 && request.status < 400) {
           taskForm.reset();
-          let newTask = {name: data.name, pomodoros: data.pomodoros, category: data.categoryName, taskTime: data.taskTime, breakTime: data.breakTime};
+          let newTask = {name: data.name, category: data.categoryName, taskTime: data.taskTime, breakTime: data.breakTime};
           TaskQueue.enqueueTask(newTask);
       } else {
           console.log('Error');
@@ -108,12 +102,10 @@ function addTaskToTable(newTask) {
 
   var nameCell = newRow.insertCell(0);
   var categoryCell = newRow.insertCell(1);
-  var pomodorosCell = newRow.insertCell(2);
-  var taskTimeCell = newRow.insertCell(3);
-  var breakTimeCell = newRow.insertCell(4);
+  var taskTimeCell = newRow.insertCell(2);
+  var breakTimeCell = newRow.insertCell(3);
   nameCell.innerHTML = newTask.name;
   categoryCell.innerHTML = newTask.category;
-  pomodorosCell.innerHTML = newTask.pomodoros;
   taskTimeCell.innerHTML = newTask.taskTime;
   breakTimeCell.innerHTML = newTask.breakTime;
 }
@@ -330,14 +322,14 @@ let Clock = {
   },
   restoreTimers: function(){
     var taskTable = document.getElementById("TaskQueue");
-    if (taskTable.rows[1] != undefined && taskTable.rows[1].cells[3].textContent != "" && taskTable.rows[1].cells[4].textContent != "") {
+    if (taskTable.rows[1] != undefined && taskTable.rows[1].cells[2].textContent != "" && taskTable.rows[1].cells[3].textContent != "") {
       console.log("Grabbing from table...");
       //Get value of task time
-      this.updateTaskInterval(taskTable.rows[1].cells[3].textContent);
-      this.taskTimeLeft = [taskTable.rows[1].cells[3].textContent, 0];
+      this.updateTaskInterval(taskTable.rows[1].cells[2].textContent);
+      this.taskTimeLeft = [taskTable.rows[1].cells[2].textContent, 0];
       //Get value of break time
-      this.updateBreakInterval(taskTable.rows[1].cells[4].textContent);
-      this.breakTimeLeft = [taskTable.rows[1].cells[4].textContent];
+      this.updateBreakInterval(taskTable.rows[1].cells[3].textContent);
+      this.breakTimeLeft = [taskTable.rows[1].cells[3].textContent];
       document.getElementById("currentTaskName").innerHTML = taskTable.rows[1].cells[0].textContent;
     } else {
       document.getElementById("currentTaskName").innerHTML = "No Task";
@@ -368,14 +360,14 @@ let Clock = {
       //If a task is in the task list, set proper timer value:
       if (taskTable != null && taskTable.rows[1] != undefined) {
         console.log("taskTable recognized");
-        if (taskTable.rows[1].cells[3].textContent != "" && taskTable.rows[1].cells[4].textContent != "") {
+        if (taskTable.rows[1].cells[2].textContent != "" && taskTable.rows[1].cells[3].textContent != "") {
           console.log("Grabbing from table...");
           //Get value of task time
-          this.updateTaskInterval(taskTable.rows[1].cells[3].textContent);
-          this.taskTimeLeft = [taskTable.rows[1].cells[3].textContent, 0];
+          this.updateTaskInterval(taskTable.rows[1].cells[2].textContent);
+          this.taskTimeLeft = [taskTable.rows[1].cells[2].textContent, 0];
           //Get value of break time
-          this.updateBreakInterval(taskTable.rows[1].cells[4].textContent);
-          this.breakTimeLeft = [taskTable.rows[1].cells[4].textContent];
+          this.updateBreakInterval(taskTable.rows[1].cells[3].textContent);
+          this.breakTimeLeft = [taskTable.rows[1].cells[3].textContent];
           document.getElementById("currentTaskName").innerHTML = taskTable.rows[1].cells[0].textContent;
         }
       }

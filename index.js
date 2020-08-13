@@ -38,7 +38,7 @@ app.set('port', process.argv[2] || 13227);
 app.get('/', function(req,res){
   if(!req.isAuthenticated()) {
     var context = {};
-    context.username = "Visitor";
+    initializeUser(req, context);
     queryString = "SELECT tasks.id, tasks.name, tasks.task_time, tasks.break_time, tasks.userid, categories.name AS catname FROM tasks JOIN categories ON tasks.categoryid = categories.id";
     newQueryString = "SELECT * FROM categories";
     getQuery(queryString, userid)
@@ -79,7 +79,7 @@ app.get('/progress', function(req, res) {
   }
   var context = {};
   initializeUser(req, context);
-  queryString = "SELECT * FROM performance WHERE userid="+req.user.id;
+  queryString = "SELECT task, SUM(task_time) as task_time, SUM(break_time) as break_time FROM performance WHERE userid="+req.user.id+" GROUP BY task";
   badgeQueryString = "SELECT * FROM badges INNER JOIN (SELECT * FROM user_earned_badges WHERE userid =" + req.user.id +") AS user_earned_badges ON badges.id = user_earned_badges.badgeid"
   getQuery(queryString)
   .then((rows) => {
