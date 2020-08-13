@@ -257,7 +257,7 @@ let Clock = {
       console.log(this.taskTimeLeft + ", " + this.breakTimeLeft);
 
     };
-    const countdown = setInterval(subtractOneSecond.bind(this), 500);
+    const countdown = setInterval(subtractOneSecond.bind(this), 1000);
   },
   decrementTask: function(){
     //if timer reaches zero, restore the timers and toggle the state
@@ -265,7 +265,6 @@ let Clock = {
       if (!TaskQueue.isEmpty()) {
         saveCompletedTask();
       }
-      decreaseTaskPomodoros();
       this.restoreTimers();
       this.state = "break";
       console.log("new state : "+ this.state)

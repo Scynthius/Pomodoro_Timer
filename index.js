@@ -53,18 +53,25 @@ app.get('/', function(req,res){
 });
 
 app.get('/progress', function(req, res) {
+  if (!req.isAuthenticated()) {
+    res.redirect('/login')
+  }
   var context = {};
   initializeUser(req, context);
-  console.log(req.user);
   queryString = "SELECT * FROM performance WHERE userid="+req.user.id;
-  badgeQueryString = "SELECT * FROM badges";
+  badgeQueryString = "SELECT * FROM badges INNER JOIN (SELECT * FROM user_earned_badges WHERE userid =" + req.user.id +") AS user_earned_badges ON badges.id = user_earned_badges.badgeid"
   getQuery(queryString)
   .then((rows) => {
     context.performance = rows;
   }).then(() =>{
     return getQuery(badgeQueryString)
   }).then((rows) =>{
+    badgesFound = false;
+    if (rows.length > 0){
+      badgesFound = true;
+    }
     context.badges = rows;
+    context.badgesFound = badgesFound;
     res.render('progress', context);
   })
 });
@@ -76,7 +83,6 @@ app.put('/', (req, res, next) => {
   var status = 200;
   var queryString = "INSERT INTO tasks (name, task_time, break_time, userid, categoryid) VALUES ((?), (?), (?), (?), (?));";
   if (req.body.newCategory){
-    console.log("New category detected.");
     var newCatQuery = "INSERT INTO categories (name, userid) VALUES ((?), (?));";
     var getCatIDQuery = "SELECT MAX(id) FROM categories;";
     postQuery(newCatQuery, [req.body.category, userid])
@@ -92,7 +98,6 @@ app.put('/', (req, res, next) => {
       res.sendStatus(200);
     })
   } else {
-    console.log("Using old category.");
     postQuery(queryString, [req.body.name, req.body.taskTime, req.body.breakTime, userid, req.body.category])
     .then((result) => {
       res.sendStatus(200);
@@ -128,7 +133,6 @@ app.get('/completed', (req, res, next) => {
     var useremail = req.user.email;
     var user = users[0].find(user => user.email === useremail);
     var userid = user.id;
-    console.log("user id:", userid);
     var taskQty;
     var sameTaskQty;
     var performance;
@@ -159,18 +163,11 @@ app.get('/completed', (req, res, next) => {
     }).then((rows) => {
       sameTaskQty = rows;
     }).then(() => {
-      console.log("performance: ", performance);
-      console.log("user_badges: ", user_badges);
-      console.log("badges: ", badges);
-      console.log("sameTaskQty: ", sameTaskQty);
-      console.log("taskQty: ", taskQty);
       var giveBadge = true;
       badges.forEach(element => {
         giveBadge = true;
-        console.log(element.id);
         user_badges.forEach(userBadge => {
           if (element.id == userBadge.badgeid) {
-            console.log("User already has this badge.");
             giveBadge = false;
           }
         })
@@ -179,7 +176,6 @@ app.get('/completed', (req, res, next) => {
           queryString = "INSERT INTO user_earned_badges (userid, badgeid) VALUES ((?), (?))";
           postQuery(queryString, [userid, element.id])
           .then((result) => {
-            console.log("Badge id ", element.id, "given to user", userid);
           })
         }
         else if (element.samesession == 1 && giveBadge == true) {
@@ -188,7 +184,6 @@ app.get('/completed', (req, res, next) => {
               queryString = "INSERT INTO user_earned_badges (userid, badgeid) VALUES ((?), (?))";
               postQuery(queryString, [userid, element.id])
               .then((result) => {
-                console.log("Badge id ", element.id, "given to user", userid);
               })
             }
           })

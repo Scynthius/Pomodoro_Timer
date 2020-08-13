@@ -1,16 +1,24 @@
 <section >
     <div class="container-xl">
-        <div class="col-sm-2">
-            <div class="card" style="width: 18rem;">
-            <img class="card-img-top" src="..." alt="Card image cap">
+        <h1 class="text-white">Your earned badges.</h1>
+        <div class="d-flex flex-row">
+            {{#if badgesFound}}
+            {{#each badges as |b|}}
+            <div class="card bg-secondary text-white">
             <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+                <h5 class="card-title">{{{b.name}}}</h5>
+                <p class="card-text">You completed {{{b.taskqty}}} tasks {{#if b.samesession}} in one session {{/if}}! </p>
             </div>
             </div>
+            {{/each}}
+            {{else}}
+            <div class="jumbotron bg-secondary text-white">
+                <h1 class="display-4">You haven't earned any badges yet!</h1>
+            </div>
+            {{/if}}
         </div>
         <div class="col-sm-8">
+            <h1 class="text-white">Your performance history.</h1>
             <canvas id="myChart"></canvas>
         </div>
     </div>
